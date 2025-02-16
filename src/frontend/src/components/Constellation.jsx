@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Line, Html, OrbitControls } from '@react-three/drei';
 import { CompassRose } from './CompassRose';
+import { AltitudeLines } from './AltitudeLines';
 import * as THREE from 'three';
 import { fetchConstellations } from '../services/starService';
 
@@ -74,8 +75,37 @@ const Star2D = ({ position, magnitude, name }) => {
 // カメラコントロールコンポーネント
 const CameraController = ({ focusedObject }) => {
   const { camera, controls } = useThree();
-  const targetRotation = useRef(new THREE.Euler());
+  const targetPosition = useRef(new THREE.Vector3());
   const isTransitioning = useRef(false);
+  const isInitialized = useRef(false);
+
+  // 初期視点の設定
+  useEffect(() => {
+    if (!isInitialized.current) {
+      // カメラを南側に配置し、北向きに設定
+      const radius = 100;
+      const elevation = 17; // 度単位
+      const elevationRad = THREE.MathUtils.degToRad(elevation);
+      
+      // カメラの位置を設定（南側の高い位置）
+      camera.position.set(
+        0,
+        radius * Math.sin(elevationRad),
+        radius * Math.cos(elevationRad)
+      );
+      
+      // 原点（方位円の中心）を見る
+      camera.lookAt(0, 0, 0);
+      camera.updateProjectionMatrix();
+      
+      if (controls) {
+        controls.target.set(0, 0, 0);
+        controls.update();
+      }
+      
+      isInitialized.current = true;
+    }
+  }, [camera, controls]);
 
   useEffect(() => {
     if (focusedObject) {
@@ -87,7 +117,7 @@ const CameraController = ({ focusedObject }) => {
         objectPosition.set(
           radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.cos(THREE.MathUtils.degToRad(ra)),
           radius * Math.sin(THREE.MathUtils.degToRad(dec)),
-          radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
+          -radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
         );
       } else if (focusedObject.type === 'constellation') {
         const ra = parseFloat(focusedObject.right_ascension_center);
@@ -96,7 +126,7 @@ const CameraController = ({ focusedObject }) => {
           objectPosition.set(
             radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.cos(THREE.MathUtils.degToRad(ra)),
             radius * Math.sin(THREE.MathUtils.degToRad(dec)),
-            radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
+            -radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
           );
         } else {
           console.error('Invalid constellation center coordinates:', focusedObject);
@@ -107,20 +137,17 @@ const CameraController = ({ focusedObject }) => {
       // 方位円の中心から天体への方向を計算
       const direction = objectPosition.normalize();
       
-      // 方向ベクトルから回転を計算
-      const rotation = new THREE.Euler();
-      rotation.setFromRotationMatrix(
-        new THREE.Matrix4().lookAt(
-          new THREE.Vector3(0, 0, 0),
-          objectPosition,
-          new THREE.Vector3(0, 1, 0)
-        )
-      );
-
-      targetRotation.current.copy(rotation);
+      // カメラの位置を方位円の中心に設定
+      camera.position.set(0, 0, 0);
+      
+      // カメラを天体の方向に向ける
+      camera.lookAt(objectPosition);
+      
+      // 現在の回転を保存
+      targetRotation.current.copy(camera.rotation);
       isTransitioning.current = true;
 
-      // OrbitControlsの中心は常に原点
+      // OrbitControlsの中心を方位円の中心に設定
       if (controls) {
         controls.target.set(0, 0, 0);
       }
@@ -162,20 +189,18 @@ const CameraController = ({ focusedObject }) => {
   return null;
 };
 
-const Constellation3D = ({ constellationData, selectedDate, showCompass, focusedObject }) => {
+const Constellation3D = ({ constellationData, selectedDate, showCompass, showAltitude, focusedObject }) => {
   return (
     <Canvas
       camera={{
-        position: [0, 0, 0],
-        up: [0, 1, 0],
+        position: [0, 0, 100],  // 南側に配置
+        up: [0, 1, 0],          // Y軸を上に設定
         near: 0.1,
         far: 200,
         fov: 75
       }}
-      onCreated={({ gl, camera }) => {
+      onCreated={({ gl }) => {
         gl.setClearColor('#000000', 1);
-        // 初期の視点を北向きに設定
-        camera.lookAt(0, 0, 100);
       }}
     >
       <ambientLight intensity={0.1} />
@@ -216,11 +241,11 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, focused
                            2 * Math.PI - Math.acos(cosA) : Math.acos(cosA);
             const radius = 100; // 星までの距離（固定値）
             
-            // 方位角・高度から3D座標に変換（北が+Z、東が+X）
+            // 方位角・高度から3D座標に変換（北が-Z、東が+X）
             const position = new THREE.Vector3(
               radius * Math.sin(azimuth) * Math.cos(altitude),
               radius * Math.sin(altitude),
-              radius * Math.cos(azimuth) * Math.cos(altitude)
+              -radius * Math.cos(azimuth) * Math.cos(altitude)
             );
 
             return (
@@ -267,7 +292,7 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, focused
             const start = new THREE.Vector3(
               radius * Math.sin(azimuth1) * Math.cos(altitude1),
               radius * Math.sin(altitude1),
-              radius * Math.cos(azimuth1) * Math.cos(altitude1)
+              -radius * Math.cos(azimuth1) * Math.cos(altitude1)
             );
 
             // 終点の星の位置を計算
@@ -287,7 +312,7 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, focused
             const end = new THREE.Vector3(
               radius * Math.sin(azimuth2) * Math.cos(altitude2),
               radius * Math.sin(altitude2),
-              radius * Math.cos(azimuth2) * Math.cos(altitude2)
+              -radius * Math.cos(azimuth2) * Math.cos(altitude2)
             );
 
             return (
@@ -302,23 +327,27 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, focused
       </group>
       <CameraController focusedObject={focusedObject} />
       <CompassRose visible={showCompass} />
+      <AltitudeLines visible={showAltitude} />
       <OrbitControls 
-        enableZoom={true}
-        enablePan={false}
-        enableRotate={true}
-        zoomSpeed={0.6}
-        rotateSpeed={0.4}
-        minDistance={0.1}
-        maxDistance={0.1}
-        minPolarAngle={0}
-        maxPolarAngle={Math.PI}
+        enableZoom={false}     // ズームを無効化
+        enablePan={false}      // パンを無効化
+        enableRotate={true}    // 回転を有効化
+        rotateSpeed={0.4}      // 回転速度
+        minDistance={100}      // カメラを球面上に固定
+        maxDistance={100}      // カメラを球面上に固定
+        minPolarAngle={Math.PI * 0.05}  // 天頂付近まで（約9度）
+        maxPolarAngle={Math.PI * 0.9}   // 地平線付近まで（約162度）
+        target={[0, 0, 0]}     // 回転の中心を方位円の中心に設定
+        enableDamping={true}   // スムーズな回転のために減衰を有効化
+        dampingFactor={0.05}   // 減衰係数
+        reverseOrbit={true}    // 回転方向を反転
       />
     </Canvas>
   );
 };
 
 // 星座全体を表示するコンポーネント
-export const Constellation = ({ selectedDate, showCompass, focusedObject }) => {
+export const Constellation = ({ selectedDate, showCompass, showAltitude, focusedObject }) => {
   const [constellationData, setConstellationData] = useState(null);
   const [error, setError] = useState(null);
   const [use2D, setUse2D] = useState(false);
@@ -394,6 +423,7 @@ export const Constellation = ({ selectedDate, showCompass, focusedObject }) => {
     constellationData={constellationData} 
     selectedDate={selectedDate}
     showCompass={showCompass}
+    showAltitude={showAltitude}
     focusedObject={focusedObject}
   />;
 };
