@@ -13,16 +13,18 @@ import IconButton from '@mui/material/IconButton';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ExploreIcon from '@mui/icons-material/Explore';
+import HeightIcon from '@mui/icons-material/Height';
 import dayjs from 'dayjs';
 import { DateTimePicker } from './components/DateTimePicker';
 import { SearchBar } from './components/SearchBar';
 
 // スターマップコンポーネント
-function StarMap({ showCompass, selectedDate, focusedObject }) {
+function StarMap({ showCompass, showAltitude, selectedDate, focusedObject }) {
   return (
     <Constellation 
       selectedDate={selectedDate} 
       showCompass={showCompass}
+      showAltitude={showAltitude}
       focusedObject={focusedObject}
     />
   );
@@ -32,6 +34,7 @@ function StarMap({ showCompass, selectedDate, focusedObject }) {
 export default function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [showCompass, setShowCompass] = useState(true);
+  const [showAltitude, setShowAltitude] = useState(true);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [focusedObject, setFocusedObject] = useState(null);
 
@@ -97,12 +100,22 @@ export default function App() {
               onClick={() => setShowCompass(!showCompass)}
               color="inherit"
               sx={{ mr: 1 }}
+              title="方位表示の切り替え"
             >
               <ExploreIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => setShowAltitude(!showAltitude)}
+              color="inherit"
+              sx={{ mr: 1 }}
+              title="高度線の表示/非表示"
+            >
+              <HeightIcon />
             </IconButton>
             <IconButton 
               onClick={() => setDarkMode(!darkMode)} 
               color="inherit"
+              title="ダークモード切り替え"
             >
               {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
@@ -120,6 +133,7 @@ export default function App() {
         >
           <StarMap 
             showCompass={showCompass}
+            showAltitude={showAltitude}
             selectedDate={selectedDate}
             focusedObject={focusedObject}
           />

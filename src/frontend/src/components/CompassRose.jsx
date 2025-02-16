@@ -8,7 +8,7 @@ const createDirectionPoint = (angle, radius) => {
   return new THREE.Vector3(
     radius * Math.sin(phi),
     0,
-    radius * Math.cos(phi)
+    -radius * Math.cos(phi)
   );
 };
 
