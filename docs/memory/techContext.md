@@ -7,11 +7,13 @@
    - Electron（デスクトップアプリケーション）
    - React（UIフレームワーク）
    - TypeScript（型安全性）
+   - React Native Web（モバイル対応）
 
 2. UI/UXライブラリ
    - Material-UI（UIコンポーネント）
    - @react-three/fiber（Three.js React バインディング）
    - @react-three/drei（Three.js ユーティリティ）
+   - React Native Paper（モバイルUI）
 
 3. 状態管理
    - Redux Toolkit
@@ -60,6 +62,7 @@
    - Node.js v18以上
    - Python 3.10以上
    - Git
+   - WSL2（Windows環境）
 
 2. OS対応
    - Linux（主要な開発環境）
@@ -74,6 +77,7 @@
      - Python
      - TypeScript
      - GitLens
+     - Remote - WSL
 
 ### 環境構築手順
 1. リポジトリのクローン
@@ -82,18 +86,29 @@ git clone [repository-url]
 cd starmap
 ```
 
-2. フロントエンド環境
+2. WSL環境設定（Windows）
+```bash
+# WSL2のインストールと設定
+wsl --install
+wsl --set-default-version 2
+
+# 開発環境のセットアップ
+sudo apt update
+sudo apt install nodejs npm python3 python3-pip
+```
+
+3. フロントエンド環境
 ```bash
 npm install
 ```
 
-3. バックエンド環境
+4. バックエンド環境
 ```bash
 cd src/backend
 pip install -r requirements.txt
 ```
 
-4. データベース初期化
+5. データベース初期化
 ```bash
 python init_db.py
 ```
@@ -107,7 +122,11 @@ python main.py
 
 2. フロントエンド起動
 ```bash
+# デスクトップ版
 npm run dev:frontend
+
+# モバイル版
+npm run dev:mobile
 ```
 
 ## ツール群
@@ -140,6 +159,7 @@ npm run dev:frontend
    - React DevTools
    - Chrome DevTools
    - WebGL Inspector
+   - React Native Debugger
 
 ### セキュリティ
 1. 依存関係チェック
@@ -177,6 +197,7 @@ npm run dev:frontend
    - webpack本番設定
    - アセット最適化
    - コード分割
+   - モバイル向け最適化
 
 2. バックエンド
    - Python wheels
@@ -189,10 +210,10 @@ npm run dev:frontend
    - 自動更新機能
    - クロスプラットフォームビルド
 
-2. モバイルアプリ（計画中）
-   - React Native
-   - Expo
-   - ネイティブモジュール
+2. モバイルアプリ
+   - Web First開発
+   - Progressive Web App
+   - ネイティブ機能の段階的統合
 
 ## バージョン管理
 

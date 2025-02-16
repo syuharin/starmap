@@ -24,6 +24,13 @@
    - Atomic Design原則
    - 再利用可能なコンポーネント
    - プレゼンテーション/コンテナパターン
+   - モバイルファーストデザイン
+
+2. モバイル対応パターン
+   - Web First開発アプローチ
+   - Progressive Enhancement
+   - レスポンシブデザインパターン
+   - タッチインタラクションパターン
 
 2. 状態管理
    - Redux Toolkitによる中央集権的状態管理
@@ -54,6 +61,14 @@
    - Factory Pattern（コンポーネント生成）
    - Strategy Pattern（描画方式）
    - Command Pattern（操作履歴）
+   - Adapter Pattern（プラットフォーム互換性）
+   - Bridge Pattern（実装の抽象化）
+
+2. モバイル実装パターン
+   - Platform Abstraction Layer
+   - Feature Detection Pattern
+   - Responsive Layout Pattern
+   - Touch Interaction Pattern
 
 2. バックエンド
    - Repository Pattern（データアクセス）
@@ -141,6 +156,8 @@
    - ESLint（JavaScript）
    - Flake8（Python）
    - TypeScript型チェック
+   - モバイル向けベストプラクティス
+   - クロスプラットフォーム互換性チェック
 
 2. コードレビュー
    - プルリクエストレビュー
