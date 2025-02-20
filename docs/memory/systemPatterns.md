@@ -21,16 +21,22 @@
 
 ### フロントエンドアーキテクチャ
 1. コンポーネント設計
-   - Atomic Design原則
-   - 再利用可能なコンポーネント
+   - 共有コンポーネントパターン
+   - プラットフォーム固有の実装分離
    - プレゼンテーション/コンテナパターン
    - モバイルファーストデザイン
 
-2. モバイル対応パターン
-   - Web First開発アプローチ
-   - Progressive Enhancement
+2. レンダリング戦略
+   - デスクトップ：Three.js 3D描画
+   - モバイル：SVGベース2D描画
+   - パフォーマンス最適化パターン
+   - メモリ管理パターン
+
+3. モバイル対応パターン
+   - SVGベースレンダリング
+   - タッチインタラクション最適化
    - レスポンシブデザインパターン
-   - タッチインタラクションパターン
+   - パフォーマンス最適化パターン
 
 2. 状態管理
    - Redux Toolkitによる中央集権的状態管理
@@ -59,10 +65,12 @@
 1. フロントエンド
    - Observer Pattern（イベント処理）
    - Factory Pattern（コンポーネント生成）
-   - Strategy Pattern（描画方式）
+   - Strategy Pattern（描画方式の切り替え）
    - Command Pattern（操作履歴）
    - Adapter Pattern（プラットフォーム互換性）
    - Bridge Pattern（実装の抽象化）
+   - Composite Pattern（SVG要素の構造化）
+   - Decorator Pattern（SVG要素の装飾）
 
 2. モバイル実装パターン
    - Platform Abstraction Layer
