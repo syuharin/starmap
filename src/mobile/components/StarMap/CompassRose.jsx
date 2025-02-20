@@ -1,7 +1,7 @@
 import React from 'react';
 
 const CompassRose = () => {
-  const radius = 450; // 方位円の半径
+  const radius = 180; // 方位円の半径（VIEWPORT_WIDTH/2に近い値に調整）
   const directions = [
     { angle: 0, text: 'N' },
     { angle: 90, text: 'E' },
@@ -25,7 +25,7 @@ const CompassRose = () => {
         r={radius}
         fill="none"
         stroke="rgba(255, 255, 255, 0.2)"
-        strokeWidth="1"
+        strokeWidth="2"
         strokeDasharray="4 4"
       />
 

@@ -9,21 +9,22 @@ import Controls from './Controls';
 
 // 定数定義
 const VIEW_ANGLE = 75; // 視野角（度）
-const VIEWPORT_SIZE = 1000;
-const SCALE = 0.5 / Math.tan((VIEW_ANGLE * Math.PI) / 360); // スケーリング係数をさらに調整
+const VIEWPORT_WIDTH = 390; // モバイル画面の幅に合わせる
+const VIEWPORT_HEIGHT = 844; // モバイル画面の高さに合わせる
+const SCALE = 0.5; // スケーリング係数を縮小
 
 const StarMap = ({ selectedDate, showCompass, showAltitude, focusedObject }) => {
   // すべてのフックを最上部に配置
   const [constellationData, setConstellationData] = useState(null);
   const [error, setError] = useState(null);
-  const [rotation, setRotation] = useState({ x: 0, y: 17 }); // 初期仰角17度
+  const [rotation, setRotation] = useState({ x: 0, y: 0 }); // 初期仰角0度
 
   // ビューポートの設定を最適化
   const viewportConfig = useMemo(() => ({
-    width: VIEWPORT_SIZE,
-    height: VIEWPORT_SIZE,
-    x: -VIEWPORT_SIZE / 4,
-    y: -VIEWPORT_SIZE / 4
+    width: VIEWPORT_WIDTH,
+    height: VIEWPORT_HEIGHT,
+    x: 0,  // 原点を(0,0)に設定
+    y: 0
   }), []);
 
   useEffect(() => {
@@ -56,7 +57,8 @@ const StarMap = ({ selectedDate, showCompass, showAltitude, focusedObject }) => 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       <svg
-        viewBox={`${viewportConfig.x} ${viewportConfig.y} ${viewportConfig.width} ${viewportConfig.height}`}
+        viewBox={`0 0 ${viewportConfig.width} ${viewportConfig.height}`}
+        preserveAspectRatio="xMidYMid meet"
         style={{
           width: '100%',
           height: '100%',
@@ -71,23 +73,19 @@ const StarMap = ({ selectedDate, showCompass, showAltitude, focusedObject }) => 
         </defs>
 
         <rect
-          x={viewportConfig.x}
-          y={viewportConfig.y}
+          x="0"
+          y="0"
           width={viewportConfig.width}
           height={viewportConfig.height}
           fill="url(#sky)"
         />
 
-        <Controls
-          initialRotation={rotation}
-          onRotationChange={setRotation}
-        >
-          <g transform={`
-            translate(${viewportConfig.width / 2}, ${viewportConfig.height / 2})
-            rotate(${rotation.x}, 0, 0)
-            translate(0, ${-rotation.y})
-            scale(${SCALE})
-          `}>
+        <g transform={`translate(${VIEWPORT_WIDTH/2} ${VIEWPORT_HEIGHT/2})`}>
+          <Controls
+            initialRotation={rotation}
+            onRotationChange={setRotation}
+          >
+            <g transform={`scale(${SCALE}) rotate(${rotation.x} 0 0)`}>
             {showAltitude && <AltitudeLines />}
             {showCompass && <CompassRose />}
             <ConstellationLines constellationData={constellationData} />
@@ -95,8 +93,9 @@ const StarMap = ({ selectedDate, showCompass, showAltitude, focusedObject }) => 
               constellationData={constellationData}
               focusedObject={focusedObject}
             />
-          </g>
-        </Controls>
+            </g>
+          </Controls>
+        </g>
       </svg>
     </Box>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
 // 定数定義
-const INITIAL_ALTITUDE = 17; // 初期仰角
+const INITIAL_ALTITUDE = 0; // 初期仰角（画面中央に配置）
 const MAX_ALTITUDE = 90;     // 最大仰角（天頂）
 const MIN_ALTITUDE = -10;    // 最小仰角（地平線以下）
 const VIEW_ANGLE = 75;       // 視野角
