@@ -1,11 +1,15 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/frontend/src/index.jsx',
+  entry: {
+    frontend: './src/frontend/src/index.jsx',
+    mobile: './src/mobile/index.jsx'
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
   },
   module: {
     rules: [
@@ -30,7 +34,19 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/frontend/public/index.html'
+      template: './src/frontend/public/index.html',
+      filename: 'index.html',
+      chunks: ['frontend']
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/mobile/public/index.html',
+      filename: 'mobile.html',
+      chunks: ['mobile']
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development')
+      }
     })
   ],
   devServer: {
@@ -44,6 +60,12 @@ module.exports = {
         target: 'http://localhost:8000',
         pathRewrite: { '^/api': '' }
       }
+    }
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      name: 'vendor'
     }
   }
 };
