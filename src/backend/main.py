@@ -163,8 +163,8 @@ async def get_constellations():
             for star in constellation.stars:
                 stars_data.append({
                     "name": star.name,
-                    "ra": star.right_ascension,
-                    "dec": star.declination,
+                    "right_ascension": star.right_ascension,
+                    "declination": star.declination,
                     "magnitude": star.magnitude
                 })
             
@@ -177,13 +177,13 @@ async def get_constellations():
                     lines_data.append({
                         "star1": {
                             "name": star1.name,
-                            "ra": star1.right_ascension,
-                            "dec": star1.declination
+                            "right_ascension": star1.right_ascension,
+                            "declination": star1.declination
                         },
                         "star2": {
                             "name": star2.name,
-                            "ra": star2.right_ascension,
-                            "dec": star2.declination
+                            "right_ascension": star2.right_ascension,
+                            "declination": star2.declination
                         }
                     })
             

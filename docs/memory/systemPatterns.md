@@ -53,6 +53,11 @@
    - RESTful原則
    - OpenAPI（Swagger）仕様
    - エラーハンドリング標準化
+   - 命名規則
+     - 天体座標：right_ascension（赤経）, declination（赤緯）
+     - 略語を避ける（ra → right_ascension）
+     - 明確な意味を持つ名前を使用
+     - 一貫性のある命名規則の適用
 
 2. データモデル
    - SQLiteによる永続化

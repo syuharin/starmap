@@ -113,20 +113,20 @@ const CameraController = ({ focusedObject }) => {
       let objectPosition = new THREE.Vector3();
 
       if (focusedObject.type === 'star') {
-        const { right_ascension: ra, declination: dec } = focusedObject;
+        const { right_ascension, declination } = focusedObject;
         objectPosition.set(
-          radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.cos(THREE.MathUtils.degToRad(ra)),
-          radius * Math.sin(THREE.MathUtils.degToRad(dec)),
-          -radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
+          radius * Math.cos(THREE.MathUtils.degToRad(declination)) * Math.cos(THREE.MathUtils.degToRad(right_ascension)),
+          radius * Math.sin(THREE.MathUtils.degToRad(declination)),
+          -radius * Math.cos(THREE.MathUtils.degToRad(declination)) * Math.sin(THREE.MathUtils.degToRad(right_ascension))
         );
       } else if (focusedObject.type === 'constellation') {
-        const ra = parseFloat(focusedObject.right_ascension_center);
-        const dec = parseFloat(focusedObject.declination_center);
-        if (!isNaN(ra) && !isNaN(dec)) {
+        const right_ascension = parseFloat(focusedObject.right_ascension_center);
+        const declination = parseFloat(focusedObject.declination_center);
+        if (!isNaN(right_ascension) && !isNaN(declination)) {
           objectPosition.set(
-            radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.cos(THREE.MathUtils.degToRad(ra)),
-            radius * Math.sin(THREE.MathUtils.degToRad(dec)),
-            -radius * Math.cos(THREE.MathUtils.degToRad(dec)) * Math.sin(THREE.MathUtils.degToRad(ra))
+            radius * Math.cos(THREE.MathUtils.degToRad(declination)) * Math.cos(THREE.MathUtils.degToRad(right_ascension)),
+            radius * Math.sin(THREE.MathUtils.degToRad(declination)),
+            -radius * Math.cos(THREE.MathUtils.degToRad(declination)) * Math.sin(THREE.MathUtils.degToRad(right_ascension))
           );
         } else {
           console.error('Invalid constellation center coordinates:', focusedObject);
@@ -222,10 +222,10 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
                        0.000387933 * t * t - t * t * t / 38710000.0) % 360;
             
             // 時角の計算
-            const ha = lst - star.ra;
+            const ha = lst - star.right_ascension;
             
             // 方位角・高度の計算
-            const dec = THREE.MathUtils.degToRad(star.dec);
+            const dec = THREE.MathUtils.degToRad(star.declination);
             const latitude = THREE.MathUtils.degToRad(lat);
             const hourAngle = THREE.MathUtils.degToRad(ha);
             
@@ -252,7 +252,7 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
               <Star
                 key={star.name}
                 position={position}
-                magnitude={2} // 仮の等級値
+                magnitude={star.magnitude}
                 name={star.name}
               />
             );
@@ -275,8 +275,8 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             const radius = 100;
 
             // 始点の星の位置を計算
-            const ha1 = lst - line.star1.ra;
-            const dec1 = THREE.MathUtils.degToRad(line.star1.dec);
+            const ha1 = lst - line.star1.right_ascension;
+            const dec1 = THREE.MathUtils.degToRad(line.star1.declination);
             const latitude = THREE.MathUtils.degToRad(lat);
             const hourAngle1 = THREE.MathUtils.degToRad(ha1);
             
@@ -296,8 +296,8 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             );
 
             // 終点の星の位置を計算
-            const ha2 = lst - line.star2.ra;
-            const dec2 = THREE.MathUtils.degToRad(line.star2.dec);
+            const ha2 = lst - line.star2.right_ascension;
+            const dec2 = THREE.MathUtils.degToRad(line.star2.declination);
             const hourAngle2 = THREE.MathUtils.degToRad(ha2);
             
             const sinAlt2 = Math.sin(dec2) * Math.sin(latitude) +
@@ -401,15 +401,15 @@ export const Constellation = ({ selectedDate, showCompass, showAltitude, focused
           constellation.stars.map(star => {
             const scale = 200;
             const position = {
-              x: Math.cos(THREE.MathUtils.degToRad(star.ra)) * scale,
-              y: Math.sin(THREE.MathUtils.degToRad(star.dec)) * scale
+              x: Math.cos(THREE.MathUtils.degToRad(star.right_ascension)) * scale,
+              y: Math.sin(THREE.MathUtils.degToRad(star.declination)) * scale
             };
 
             return (
               <Star2D
                 key={star.name}
                 position={position}
-                magnitude={2}
+                magnitude={star.magnitude}
                 name={star.name}
               />
             );
