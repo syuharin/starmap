@@ -58,21 +58,31 @@
 
 ## 開発環境
 
-### WSL2環境要件
-1. システム要件
+### システム要件
+1. Windows環境
+   - Windows 10/11
+   - メモリ：8GB以上推奨
+   - Node.js v18以上
+   - Python 3.10以上
+   - Git for Windows
+   - Visual Studio Code
+   - SQLite
+
+2. WSL2環境
    - Windows 10 バージョン2004以降
    - WSL2が有効化されていること
    - 仮想化機能の有効化
    - メモリ：8GB以上推奨
-
-2. 必要なソフトウェア
-   - Node.js v18以上
-   - Python 3.10以上
-   - Git
-   - Visual Studio Code
    - Windows Terminal（推奨）
 
-3. WSL固有の設定
+### 環境固有の設定
+1. Windows環境
+   - Pythonの環境変数設定
+   - 仮想環境（venv）の使用
+   - npm/yarnのグローバルパッケージ設定
+   - VSCode拡張機能の設定
+
+2. WSL固有の設定
    - ネットワークポート転送の設定
    - ファイルシステムのパフォーマンス最適化
    - メモリ割り当ての調整
@@ -85,7 +95,13 @@
    - ポート競合の解決方法
    - メモリリークの対処
 
-2. 環境固有の問題
+2. Windows環境の問題
+   - Python仮想環境の問題
+   - npm/yarnのパッケージ問題
+   - ポート使用状況の確認
+   - パーミッション関連の問題
+
+3. WSL環境の問題
    - WSLとWindowsの連携問題
    - ファイルパーミッションの問題
    - ネットワーク接続の問題

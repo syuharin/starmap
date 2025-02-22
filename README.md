@@ -53,7 +53,13 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 - Python (v3.10以上)
 - npm または yarn
 
-### インストール手順
+### 開発環境のセットアップ
+
+#### Windows環境
+Windows環境でのセットアップ方法については、[Windows環境セットアップガイド](docs/windows-setup.md)を参照してください。
+
+#### WSL/Linux環境
+
 1. リポジトリのクローン
 ```bash
 git clone https://github.com/syuharin/starmap.git
@@ -69,21 +75,22 @@ npm install
 ```bash
 cd src/backend
 pip install -r requirements.txt
+cd ../..
 ```
 
 4. データベースの初期化
 ```bash
 cd src/backend
 python init_db.py
+cd ../..
 ```
-この手順でオリオン座の基本データがデータベースに登録されます。
+この手順でオリオン座と北斗七星の基本データがデータベースに登録されます。
 
 ### 開発サーバーの起動
 
 1. バックエンドサーバーの起動
 ```bash
-cd src/backend
-python main.py
+npm run dev:backend
 ```
 バックエンドサーバーは http://localhost:8000 で起動します。
 
@@ -92,10 +99,15 @@ python main.py
 npm run dev:frontend
 ```
 
-3. ブラウザでアプリケーションにアクセス
+3. モバイル版の開発サーバーの起動（必要な場合、新しいターミナルで実行）
+```bash
+npm run dev:mobile
 ```
-http://localhost:3002
-```
+
+4. アプリケーションへのアクセス
+- フロントエンド: http://localhost:3002
+- モバイル版: http://localhost:3003
+- バックエンドAPI: http://localhost:8000
 
 ### 現在の制限事項
 - オリオン座と北斗七星のみ表示可能

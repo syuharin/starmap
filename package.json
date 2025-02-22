@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "start": "electron .",
-    "dev:electron": "NODE_ENV=development electron .",
-    "dev:backend": "cd src/backend && uvicorn main:app --reload --port 8000",
+    "dev:electron": "set NODE_ENV=development && electron .",
+    "dev:backend": "cd src/backend && python -m uvicorn main:app --reload --port 8000",
     "dev:frontend": "webpack serve --mode development --port 3002",
     "dev:mobile": "webpack serve --mode development --port 3003 --env platform=mobile",
     "build": "webpack --mode production",
