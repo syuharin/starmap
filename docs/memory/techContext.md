@@ -63,7 +63,6 @@
 
 2. OS対応
    - Linux（主要な開発環境）
-   - Windows（WSL2での開発）
    - macOS（予定）
 
 3. IDE/エディタ

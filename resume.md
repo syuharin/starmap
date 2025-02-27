@@ -236,20 +236,7 @@
 
 ### 11.2 今後の実装予定
 
-### 11.1 WSL開発環境の設定（進行中）
-- Android SDKへのアクセス設定
-  - ANDROID_HOME環境変数の設定完了（/mnt/c/Users/ninem/AppData/Local/Android/Sdk）
-  - PATHの設定完了（platform-tools追加）
-- adbサーバーの設定
-  - Windows側のadbサーバーが正常動作確認済み
-  - WSL-Windows間のadb連携に課題あり
-  - 代替案としてExpo Goアプリでのテストを検討
 
-### 11.2 開発環境の移行計画
-- Windows側での開発環境構築
-  - プロジェクトをWindows環境にコピー（C:\Users\ninem\Projects\StarMapMobile）
-  - Android Studioでの開発準備
-  - エミュレータ設定の確認
 
 ### 11.3 モバイル版の機能実装
 - Three.jsのモバイル対応
