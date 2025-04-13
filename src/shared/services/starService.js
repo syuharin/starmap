@@ -1,7 +1,9 @@
 // 星図データを取得するサービス
-const API_BASE_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:8000' 
-  : 'https://api.example.com';
+// 環境変数からAPI URLを取得、またはホスト名に基づいて決定
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : 'https://api.example.com');
 
 // APIリクエストのラッパー関数
 const fetchAPI = async (endpoint, params = {}) => {

@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
@@ -9,14 +11,33 @@ import numpy as np
 from database import SessionLocal
 from models import Constellation, Star
 
+# .envファイルから環境変数を読み込む
+load_dotenv()
+
 app = FastAPI(title="星図表示アプリケーション API")
 
+# フロントエンドのURLを環境変数から取得（デフォルトはローカル開発用）
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3003")
+
+# 開発環境かどうかを判断
+IS_DEV = os.getenv("ENVIRONMENT", "development") == "development"
+
 # CORS設定
+if IS_DEV:
+    # 開発環境では全てのオリジンを許可
+    origins = ["*"]
+else:
+    # 本番環境では特定のオリジンのみ許可
+    origins = [FRONTEND_URL]
+    # カンマ区切りの複数URLにも対応
+    if "," in FRONTEND_URL:
+        origins = [url.strip() for url in FRONTEND_URL.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 開発環境用。本番環境では適切に制限する
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 

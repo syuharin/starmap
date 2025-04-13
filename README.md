@@ -114,6 +114,43 @@ npm run dev:mobile
 - 現在位置や時刻に基づく表示位置の調整は未実装
 - 星座の詳細情報表示は未実装
 
+## デプロイ手順
+
+### クラウドデプロイ
+本アプリケーションはVercel（フロントエンド）とRender（バックエンド）を使用したクラウドデプロイに対応しています。
+
+#### フロントエンド（Vercel）
+1. Vercelアカウントを作成し、GitHubリポジトリと連携
+2. 新しいプロジェクトを作成し、以下の設定を行う：
+   - **Framework Preset**: Other
+   - **Build Command**: `npm run build:mobile`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+3. 環境変数を設定：
+   - `REACT_APP_API_URL`: RenderでデプロイされるバックエンドのURL
+
+#### バックエンド（Render）
+1. Renderアカウントを作成し、GitHubリポジトリと連携
+2. `render.yaml`を使用して新しいBlueprint（設計図）を作成
+   - Renderダッシュボードで「New Blueprint」を選択
+   - リポジトリとブランチを選択
+   - `render.yaml`が自動的に検出され、設定が読み込まれる
+3. 必要に応じて環境変数を調整：
+   - `FRONTEND_URL`: VercelでデプロイされるフロントエンドのURL
+4. デプロイ完了後、データ移行を実行：
+   ```
+   cd src/backend
+   python migrate_to_postgres.py
+   ```
+
+### デスクトップアプリケーションのビルド
+```bash
+# Electronアプリケーションのビルド
+npm run build
+npm run package
+```
+ビルドされたアプリケーションは `dist` ディレクトリに生成されます。
+
 ## 開発プロセス
 
 ### ブランチ戦略

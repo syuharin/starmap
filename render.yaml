@@ -1,0 +1,27 @@
+# Render設定ファイル
+services:
+  # バックエンドAPI
+  - type: web
+    name: starmap-api
+    env: python
+    region: singapore  # アジア圏に近いリージョン
+    buildCommand: pip install -r src/backend/requirements.txt
+    startCommand: cd src/backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: starmap-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://starmap-frontend.vercel.app  # VercelでデプロイされるフロントエンドのURL
+      - key: ENVIRONMENT
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.10.0
+
+# PostgreSQLデータベース
+databases:
+  - name: starmap-db
+    region: singapore
+    plan: free  # 無料プラン
+    postgresMajorVersion: 14  # PostgreSQL 14を使用

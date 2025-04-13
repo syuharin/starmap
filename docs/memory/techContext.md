@@ -32,8 +32,10 @@
    - Uvicorn（ASGIサーバー）
 
 2. データベース
-   - SQLite
+   - SQLite（開発環境）
+   - PostgreSQL（本番環境）
    - SQLAlchemy（ORM）
+   - psycopg2-binary（PostgreSQL接続）
    - Alembic（マイグレーション）
 
 3. 天体計算
@@ -66,7 +68,7 @@
    - Python 3.10以上
    - Git for Windows
    - Visual Studio Code
-   - SQLite
+   - PostgreSQL (ローカル開発用)
 
 2. WSL2環境
    - Windows 10 バージョン2004以降
@@ -155,9 +157,20 @@ cd src/backend
 pip install -r requirements.txt
 ```
 
-5. データベース初期化
+5. ローカルPostgreSQL設定
+   - PostgreSQLをインストールし、データベースとユーザーを作成
+   - プロジェクトルートに `.env` ファイルを作成し、`DATABASE_URL` を設定
+   ```dotenv
+   DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/starmap
+   FRONTEND_URL=http://localhost:3003
+   ENVIRONMENT=development
+   ```
+
+6. データベース初期化
 ```bash
+cd src/backend
 python init_db.py
+cd ../..
 ```
 
 ### 開発サーバー
@@ -239,17 +252,57 @@ npm run dev:mobile
 
 ## デプロイメント
 
+### クラウドデプロイ
+1. フロントエンド（Vercel）
+   - 環境変数による設定管理
+     - `REACT_APP_API_URL`：バックエンドAPIのURL
+   - ビルド設定
+     - ビルドコマンド：`npm run build:mobile`
+     - 出力ディレクトリ：`dist`
+     - ルートファイル：`mobile.html`
+   - CI/CD連携
+     - GitHub連携
+     - プレビューデプロイ
+     - 自動デプロイ
+
+2. バックエンド（Render）
+   - Web Service設定
+     - ビルドコマンド：`pip install -r src/backend/requirements.txt`
+     - スタートコマンド：`cd src/backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
+     - リージョン：`singapore`（アジア圏）
+   - 環境変数
+     - `DATABASE_URL`：PostgreSQL接続URL
+     - `FRONTEND_URL`：フロントエンドURL
+     - `ENVIRONMENT`：`production`
+   - Infrastructure as Code
+     - `render.yaml`による設定
+
+3. データベース（Render PostgreSQL）
+   - 無料プラン
+   - 自動バックアップ
+   - データ移行
+     - SQLiteからの移行スクリプト
+     - 初期データのシード
+
+4. データ移行
+   - `migrate_to_postgres.py`スクリプト
+   - テーブル作成
+   - データコピー
+   - ID参照の維持
+
 ### ビルド設定
 1. フロントエンド
    - webpack本番設定
    - アセット最適化
    - コード分割
    - モバイル向け最適化
+   - 環境変数の注入（DefinePlugin）
 
 2. バックエンド
    - Python wheels
    - 依存関係の最適化
    - 環境変数管理
+   - CORS設定
 
 ### 配布
 1. デスクトップアプリ
@@ -261,6 +314,7 @@ npm run dev:mobile
    - Web First開発
    - Progressive Web App
    - ネイティブ機能の段階的統合
+   - Vercelホスティング
 
 ## バージョン管理
 
