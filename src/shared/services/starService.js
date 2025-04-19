@@ -1,9 +1,20 @@
 // 星図データを取得するサービス
 // 環境変数からAPI URLを取得、またはホスト名に基づいて決定
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (window.location.hostname === 'localhost' 
-    ? 'http://localhost:8000' 
-    : 'https://api.example.com');
+// デバッグ情報をコンソールに出力
+console.log('DEBUG - process.env.REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('DEBUG - window.location.hostname:', window.location.hostname);
+console.log('DEBUG - hostname === localhost:', window.location.hostname === 'localhost');
+
+// 問題回避のため、Replitの公開URLを直接指定（一時的な対処）
+const API_BASE_URL = 'https://2c7a46f6-9675-4c8c-8ec0-0d442d938f4e-00-2px10lidqstxs.sisko.replit.dev';
+
+// 元のコード（コメントアウト）
+// const API_BASE_URL = process.env.REACT_APP_API_URL || 
+//   (window.location.hostname === 'localhost' 
+//     ? 'http://localhost:8000' 
+//     : 'https://api.example.com');
+
+console.log('DEBUG - 最終的なAPI_BASE_URL:', API_BASE_URL);
 
 // APIリクエストのラッパー関数
 const fetchAPI = async (endpoint, params = {}) => {
