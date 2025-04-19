@@ -44,10 +44,8 @@ module.exports = {
       chunks: ['mobile']
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-        REACT_APP_API_URL: JSON.stringify(process.env.REACT_APP_API_URL || '')
-      }
+      // NODE_ENV はVercelが設定するものを優先し、ここでは設定しない
+      'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'MISSING_API_URL_IN_BUILD') 
     })
   ],
   devServer: {
