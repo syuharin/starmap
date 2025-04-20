@@ -54,13 +54,12 @@ module.exports = {
     },
     hot: true,
     port: 3002,
-    // プロキシ設定を一時的にコメントアウト
-    // proxy: {
-    //   '/api': {
-    //     target: 'http://localhost:8000',
-    //     pathRewrite: { '^/api': '' }
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        pathRewrite: { '^/api': '' }
+      }
+    }
   },
   optimization: {
     splitChunks: {

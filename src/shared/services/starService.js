@@ -1,32 +1,17 @@
 // 星図データを取得するサービス
 // 環境変数からAPI URLを取得、またはホスト名に基づいて決定
-// デバッグ情報をコンソールに出力
-console.log('DEBUG - process.env.REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-console.log('DEBUG - window.location.hostname:', window.location.hostname);
-console.log('DEBUG - hostname === localhost:', window.location.hostname === 'localhost');
-
-// 問題回避のため、Replitの公開URLを直接指定（一時的な対処）
-const API_BASE_URL = 'https://2c7a46f6-9675-4c8c-8ec0-0d442d938f4e-00-2px10lidqstxs.sisko.replit.dev';
-
-// 元のコード（コメントアウト）
-// const API_BASE_URL = process.env.REACT_APP_API_URL || 
-//   (window.location.hostname === 'localhost' 
-//     ? 'http://localhost:8000' 
-//     : 'https://api.example.com');
-
-console.log('DEBUG - 最終的なAPI_BASE_URL:', API_BASE_URL);
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : 'https://api.example.com'); // デフォルト値
 
 // APIリクエストのラッパー関数
 const fetchAPI = async (endpoint, params = {}) => {
   const queryString = new URLSearchParams(params).toString();
   const url = `${API_BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`;
   
-  // デバッグ: 実際のリクエストURLをコンソールに出力
-  console.log('DEBUG - 実際のリクエストURL:', url);
-  
   try {
-    // 直接URLを指定してfetchを実行（API_BASE_URLを確実に使用）
-    const response = await fetch(`${API_BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`);
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`APIリクエストエラー: ${response.statusText}`);
     }
