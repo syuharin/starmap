@@ -62,6 +62,9 @@
    - ✅ 検索結果表示
    - ✅ ローディング表示
 
+4. API連携
+   - ✅ **APIリトライ機能**: バックエンドAPI呼び出し (stars, search, constellations) に指数バックオフを用いたリトライ機能（最大3回）を実装 (`src/app/services/starService.js`)。
+
 ## 開発中の機能
 
 ### フロントエンド (統合コードベース)

@@ -80,6 +80,7 @@
    - Adapter Pattern（外部サービス連携など）
    - レスポンシブデザインパターン
    - タッチインタラクションパターン (実装予定)
+   - **API Retry Pattern**: バックエンドAPI呼び出し (`fetchStars`, `searchCelestialObjects`, `fetchConstellations`) において、サーバーエラー(5xx)やネットワークエラー発生時に指数バックオフを用いたリトライ（最大3回）を実装 (`fetchWithRetry` ヘルパー関数 in `src/app/services/starService.js`)。これにより、バックエンドのスリープからの復帰など、一時的な接続問題に対する耐性を向上。
 
 2. バックエンド
    - Repository Pattern（データアクセス）
