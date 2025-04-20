@@ -1,0 +1,10 @@
+# Replit configuration file
+
+# Specifies the command to run when the "Run" button is clicked.
+run = "cd src/backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+
+# Specifies the programming language.
+language = "python3"
+
+# Optional: Specify the entry point if needed for other Replit features.
+# entrypoint = "src/backend/main.py"

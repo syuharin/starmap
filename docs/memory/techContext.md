@@ -30,8 +30,10 @@
    - Uvicorn（ASGIサーバー）
 
 2. データベース
-   - SQLite
+   - SQLite（開発環境）
+   - PostgreSQL（本番環境）
    - SQLAlchemy（ORM）
+   - psycopg2-binary（PostgreSQL接続）
    - Alembic（マイグレーション）
 
 3. 天体計算
@@ -52,27 +54,77 @@
 3. テストフレームワーク
    - Jest + React Testing Library（フロントエンド）
    - pytest（バックエンド）
+   - Puppeteer（ヘッドレステスト）
 
 ## 開発環境
 
-### 必要条件
-1. ソフトウェア要件
+### システム要件
+1. Windows環境
+   - Windows 10/11
+   - メモリ：8GB以上推奨
    - Node.js v18以上
    - Python 3.10以上
-   - Git
+   - Git for Windows
+   - Visual Studio Code
+   - PostgreSQL (ローカル開発用)
 
-2. OS対応
-   - Linux（主要な開発環境）
-   - macOS（予定）
+2. WSL2環境
+   - Windows 10 バージョン2004以降
+   - WSL2が有効化されていること
+   - 仮想化機能の有効化
+   - メモリ：8GB以上推奨
+   - Windows Terminal（推奨）
 
-3. IDE/エディタ
-   - VSCode推奨
+### 環境固有の設定
+1. Windows環境
+   - Pythonの環境変数設定
+   - 仮想環境（venv）の使用
+   - npm/yarnのグローバルパッケージ設定
+   - VSCode拡張機能の設定
+
+2. WSL固有の設定
+   - ネットワークポート転送の設定
+   - ファイルシステムのパフォーマンス最適化
+   - メモリ割り当ての調整
+   - プロセス管理の設定
+
+### トラブルシューティング
+1. プロセス管理
+   - 実行中プロセスの確認方法
+   - プロセスのクリーンアップ手順
+   - ポート競合の解決方法
+   - メモリリークの対処
+
+2. Windows環境の問題
+   - Python仮想環境の問題
+   - npm/yarnのパッケージ問題
+   - ポート使用状況の確認
+   - パーミッション関連の問題
+
+3. WSL環境の問題
+   - WSLとWindowsの連携問題
+   - ファイルパーミッションの問題
+   - ネットワーク接続の問題
+   - パフォーマンスの問題
+
+3. テスト実行時の注意点
+   - プロセスの分離実行
+   - リソースの解放確認
+   - エラーログの確認方法
+   - 再試行メカニズムの利用
+
+### IDE/エディタ
+1. VSCode推奨設定
+   - Remote - WSL拡張機能
+   - WSL固有の設定
+   - デバッグ設定
    - 必要な拡張機能：
      - ESLint
      - Prettier
      - Python
      - TypeScript
      - GitLens
+     - Remote - WSL
 
 ### 環境構築手順
 1. リポジトリのクローン
@@ -81,20 +133,42 @@ git clone [repository-url]
 cd starmap
 ```
 
-2. フロントエンド環境
+2. WSL環境設定（Windows）
+```bash
+# WSL2のインストールと設定
+wsl --install
+wsl --set-default-version 2
+
+# 開発環境のセットアップ
+sudo apt update
+sudo apt install nodejs npm python3 python3-pip
+```
+
+3. フロントエンド環境
 ```bash
 npm install
 ```
 
-3. バックエンド環境
+4. バックエンド環境
 ```bash
 cd src/backend
 pip install -r requirements.txt
 ```
 
-4. データベース初期化
+5. ローカルPostgreSQL設定
+   - PostgreSQLをインストールし、データベースとユーザーを作成
+   - プロジェクトルートに `.env` ファイルを作成し、`DATABASE_URL` を設定
+   ```dotenv
+   DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/starmap
+   FRONTEND_URL=http://localhost:3003
+   ENVIRONMENT=development
+   ```
+
+6. データベース初期化
 ```bash
+cd src/backend
 python init_db.py
+cd ../..
 ```
 
 ### 開発サーバー
@@ -106,6 +180,7 @@ python main.py
 
 2. フロントエンド起動
 ```bash
+# フロントエンド (統合版)
 npm run dev:frontend
 ```
 
@@ -139,6 +214,7 @@ npm run dev:frontend
    - React DevTools
    - Chrome DevTools
    - WebGL Inspector
+   - React Native Debugger
 
 ### セキュリティ
 1. 依存関係チェック
@@ -171,16 +247,49 @@ npm run dev:frontend
 
 ## デプロイメント
 
+### クラウドデプロイ
+1. フロントエンド（Vercel）
+   - 環境変数による設定管理
+     - `REACT_APP_API_URL`：バックエンドAPIのURL
+   - ビルド設定
+     - ビルドコマンド：`npm run build`
+     - 出力ディレクトリ：`dist`
+     - ルートファイル：`index.html`
+   - CI/CD連携
+     - GitHub連携
+     - プレビューデプロイ
+     - 自動デプロイ
+
+2. バックエンド（Replit）
+   - Replit設定 (`.replit` ファイル)
+     - スタートコマンド：`cd src/backend && uvicorn main:app --host 0.0.0.0 --port 8080`
+   - 環境変数 (Secrets)
+     - `DATABASE_URL`：Neon PostgreSQL接続URL
+     - `FRONTEND_URL`：VercelフロントエンドURL
+     - `ENVIRONMENT`：`production` または `development`
+   - 依存関係: `src/backend/requirements.txt` を使用
+
+3. データベース（Neon PostgreSQL）
+   - 無料プラン
+   - 自動バックアップ (Neonの機能)
+   - データ初期化
+     - `src/backend/init_db.py` スクリプトでテーブル作成と初期データ投入
+
+4. データ移行 (不要)
+   - SQLiteからの移行スクリプト (`migrate_to_postgres.py`) は使用せず、`init_db.py` で初期化
+
 ### ビルド設定
 1. フロントエンド
    - webpack本番設定
    - アセット最適化
    - コード分割
+   - 環境変数の注入（DefinePlugin）
 
 2. バックエンド
    - Python wheels
    - 依存関係の最適化
    - 環境変数管理
+   - CORS設定
 
 ### 配布
 1. デスクトップアプリ
@@ -188,10 +297,10 @@ npm run dev:frontend
    - 自動更新機能
    - クロスプラットフォームビルド
 
-2. モバイルアプリ（計画中）
-   - React Native
-   - Expo
-   - ネイティブモジュール
+2. Webアプリケーション (PC/モバイル)
+   - レスポンシブデザイン
+   - Progressive Web App (検討中)
+   - Vercelホスティング
 
 ## バージョン管理
 

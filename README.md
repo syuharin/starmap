@@ -1,7 +1,7 @@
 # 星図表示アプリケーション
 
 ## 概要
-本アプリケーションは、現在位置や特定の日時に基づいて夜空の星図を表示するPC向けアプリケーションです。
+本アプリケーションは、現在位置や特定の日時に基づいて夜空の星図を表示するWebアプリケーション (PC/モバイル対応) です。
 GPSや手動入力による位置情報、カレンダーによる日時指定に対応し、インタラクティブな星図表示を実現します。
 
 ## 主な機能
@@ -32,7 +32,6 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 
 ## 技術スタック
 ### フロントエンド
-- Electron
 - React
 - Three.js (WebGL)
 - @react-three/fiber
@@ -43,7 +42,7 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 ### バックエンド
 - Python
 - FastAPI
-- SQLite
+- PostgreSQL (ローカル開発), Neon (本番)
 - Skyfield（天体計算）
 
 ## セットアップ手順
@@ -53,7 +52,13 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 - Python (v3.10以上)
 - npm または yarn
 
-### インストール手順
+### 開発環境のセットアップ
+
+#### Windows環境
+Windows環境でのセットアップ方法については、[Windows環境セットアップガイド](docs/windows-setup.md)を参照してください。
+
+#### WSL/Linux環境
+
 1. リポジトリのクローン
 ```bash
 git clone https://github.com/syuharin/starmap.git
@@ -69,21 +74,31 @@ npm install
 ```bash
 cd src/backend
 pip install -r requirements.txt
+cd ../..
 ```
 
-4. データベースの初期化
+4. ローカルデータベースの設定 (PostgreSQL)
+   - ローカルにPostgreSQLをインストールし、データベース（例: `starmap`）とユーザーを作成します。
+   - プロジェクトルートに `.env` ファイルを作成し、以下の形式でデータベース接続情報を記述します。
+     ```dotenv
+     DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/starmap
+     FRONTEND_URL=http://localhost:3003 # 開発用フロントエンドURL
+     ENVIRONMENT=development
+     ```
+
+5. データベースの初期化
 ```bash
 cd src/backend
 python init_db.py
+cd ../..
 ```
-この手順でオリオン座の基本データがデータベースに登録されます。
+この手順でオリオン座と北斗七星の基本データがデータベースに登録されます。
 
 ### 開発サーバーの起動
 
 1. バックエンドサーバーの起動
 ```bash
-cd src/backend
-python main.py
+npm run dev:backend
 ```
 バックエンドサーバーは http://localhost:8000 で起動します。
 
@@ -92,15 +107,51 @@ python main.py
 npm run dev:frontend
 ```
 
-3. ブラウザでアプリケーションにアクセス
-```
-http://localhost:3002
-```
+3. アプリケーションへのアクセス
+- フロントエンド: http://localhost:3002
+- バックエンドAPI: http://localhost:8000
 
 ### 現在の制限事項
 - オリオン座と北斗七星のみ表示可能
 - 現在位置や時刻に基づく表示位置の調整は未実装
 - 星座の詳細情報表示は未実装
+
+## デプロイ手順
+
+### クラウドデプロイ (Vercel / Replit / Neon)
+本アプリケーションは以下のサービスを使用したクラウドデプロイに対応しています。
+
+#### データベース（Neon）
+1. [Neon](https://neon.tech/) でアカウントを作成し、新しいPostgreSQLプロジェクトを作成します。
+2. 作成したデータベースの接続URL（Connection String）を取得します。
+
+#### バックエンド（Replit）
+1. [Replit](https://replit.com/) でアカウントを作成し、GitHubリポジトリをPythonプロジェクトとしてインポートします。
+2. Replitの「Secrets」（環境変数）に以下を設定します。
+   - `DATABASE_URL`: Neonで取得したデータベース接続URL
+   - `FRONTEND_URL`: VercelでデプロイするフロントエンドのURL（後述）
+   - `ENVIRONMENT`: `production`
+3. Replitの「Shell」タブでデータベースを初期化します。
+   ```bash
+   python src/backend/init_db.py
+   ```
+4. Replitの `.replit` ファイルを以下のように設定します（または確認します）。
+   ```toml
+   run = "cd src/backend && uvicorn main:app --host 0.0.0.0 --port 8080"
+   language = "python3"
+   ```
+5. Replitの「Run」ボタンを押してバックエンドサーバーを起動します。起動後、公開URL（例: `https://<your-repl-name>.replit.dev`）を控えておきます。
+
+#### フロントエンド（Vercel）
+1. [Vercel](https://vercel.com/) でアカウントを作成し、GitHubリポジトリと連携します。
+2. 新しいプロジェクトを作成し、以下の設定を行います。
+   - **Framework Preset**: `Create React App` または `React` (推奨)
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+3. 環境変数を設定します。
+   - `REACT_APP_API_URL`: Replitで控えておいたバックエンドの公開URL
+4. デプロイを実行します。デプロイ完了後、公開されたフロントエンドのURLをReplitの `FRONTEND_URL` 環境変数に設定します（必要であればReplitを再起動）。
 
 ## 開発プロセス
 

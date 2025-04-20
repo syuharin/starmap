@@ -1,6 +1,11 @@
-from database import engine, SessionLocal
+import os
+from dotenv import load_dotenv
+from database import engine, SessionLocal, is_postgres
 from models import Base, Star, Constellation, ConstellationLine
 import models
+
+# .envファイルから環境変数を読み込む
+load_dotenv()
 
 def add_orion_constellation(db):
     """オリオン座のデータを追加"""

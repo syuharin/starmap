@@ -53,3 +53,6 @@ wheels/
 *.tmp
 .coverage
 htmlcov/
+
+# テスト結果
+test-results/

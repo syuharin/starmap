@@ -1,5 +1,9 @@
 // 星図データを取得するサービス
-const API_BASE_URL = 'http://localhost:8000';
+// 環境変数からAPI URLを取得、またはホスト名に基づいて決定
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : 'https://api.example.com'); // デフォルト値
 
 export const fetchStars = async (latitude, longitude, altitude = 0, datetime = null) => {
     const params = new URLSearchParams({
@@ -18,7 +22,8 @@ export const fetchStars = async (latitude, longitude, altitude = 0, datetime = n
 
 export const searchCelestialObjects = async (query, type = 'all') => {
   try {
-    const response = await fetch(`http://localhost:8000/search?query=${encodeURIComponent(query)}&type=${type}`);
+    const url = `${API_BASE_URL}/search?query=${encodeURIComponent(query)}&type=${type}`;
+    const response = await fetch(url);
     if (!response.ok) {
       throw new Error('検索に失敗しました');
     }
