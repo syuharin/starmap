@@ -218,9 +218,12 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             const utc = selectedDate.valueOf(); // UTCミリ秒を取得
             const jd = 2440587.5 + utc / 86400000; // ユリウス日
             const t = (jd - 2451545.0) / 36525.0;
-            const lst = (280.46061837 + 360.98564736629 * (jd - 2451545.0) +
-                       0.000387933 * t * t - t * t * t / 38710000.0) % 360;
-            
+            // グリニッジ平均恒星時 (GMST) を度で計算
+            const gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0) +
+                        0.000387933 * t * t - t * t * t / 38710000.0) % 360;
+            // 地方恒星時 (LST) = GMST + 経度 (度)
+            const lst = (gmst + lng) % 360; // lng は度単位
+
             // 時角の計算
             const ha = lst - star.right_ascension;
             
@@ -266,12 +269,15 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             const utc = selectedDate.valueOf();
             const jd = 2440587.5 + utc / 86400000;
             const t = (jd - 2451545.0) / 36525.0;
-            const lst = (280.46061837 + 360.98564736629 * (jd - 2451545.0) +
-                       0.000387933 * t * t - t * t * t / 38710000.0) % 360;
-            
+            // グリニッジ平均恒星時 (GMST) を度で計算
+            const gmst = (280.46061837 + 360.98564736629 * (jd - 2451545.0) +
+                        0.000387933 * t * t - t * t * t / 38710000.0) % 360;
             // 観測地点の設定（東京）
             const lat = 35.6762;
-            const lng = 139.6503;
+            const lng = 139.6503; // lng を先に定義
+            // 地方恒星時 (LST) = GMST + 経度 (度)
+            const lst = (gmst + lng) % 360; // lng は度単位
+
             const radius = 100;
 
             // 始点の星の位置を計算
@@ -286,9 +292,11 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             
             const cosA1 = (Math.sin(dec1) - Math.sin(altitude1) * Math.sin(latitude)) /
                          (Math.cos(altitude1) * Math.cos(latitude));
-            const azimuth1 = Math.sin(hourAngle1) > 0 ? 
-                            2 * Math.PI - Math.acos(cosA1) : Math.acos(cosA1);
-            
+            // Clamp cosA1 to prevent Math.acos returning NaN
+            const clampedCosA1 = Math.max(-1, Math.min(1, cosA1));
+            const azimuth1 = Math.sin(hourAngle1) > 0 ?
+                            2 * Math.PI - Math.acos(clampedCosA1) : Math.acos(clampedCosA1);
+
             const start = new THREE.Vector3(
               radius * Math.sin(azimuth1) * Math.cos(altitude1),
               radius * Math.sin(altitude1),
@@ -306,14 +314,22 @@ const Constellation3D = ({ constellationData, selectedDate, showCompass, showAlt
             
             const cosA2 = (Math.sin(dec2) - Math.sin(altitude2) * Math.sin(latitude)) /
                          (Math.cos(altitude2) * Math.cos(latitude));
-            const azimuth2 = Math.sin(hourAngle2) > 0 ? 
-                            2 * Math.PI - Math.acos(cosA2) : Math.acos(cosA2);
-            
+            // Clamp cosA2 to prevent Math.acos returning NaN
+            const clampedCosA2 = Math.max(-1, Math.min(1, cosA2));
+            const azimuth2 = Math.sin(hourAngle2) > 0 ?
+                            2 * Math.PI - Math.acos(clampedCosA2) : Math.acos(clampedCosA2);
+
             const end = new THREE.Vector3(
               radius * Math.sin(azimuth2) * Math.cos(altitude2),
               radius * Math.sin(altitude2),
               -radius * Math.cos(azimuth2) * Math.cos(altitude2)
             );
+
+            // NaNチェックを追加
+            if (isNaN(start.x) || isNaN(start.y) || isNaN(start.z) || isNaN(end.x) || isNaN(end.y) || isNaN(end.z)) {
+              console.error("NaN detected in line calculation for:", line);
+              return null; // NaNが含まれる場合は線を描画しない
+            }
 
             return (
               <ConstellationLine

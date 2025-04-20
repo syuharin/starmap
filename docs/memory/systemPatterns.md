@@ -58,6 +58,10 @@
      - 略語を避ける（ra → right_ascension）
      - 明確な意味を持つ名前を使用
      - 一貫性のある命名規則の適用
+   - **星座線データの扱い**:
+     - `/constellations` エンドポイントは、各星座に属する星の情報 (`stars`) に加えて、星座を構成する線 (`lines`) の情報も返却します。
+     - この線情報は、`models.py` で定義された `Constellation` と `ConstellationLine` のリレーションシップ (`constellation.lines`) を利用して、API実装 (`main.py`) 内で動的に取得・整形され、レスポンスに含まれます。
+     - 注意点として、対応するPydanticスキーマ (`schemas.py` の `Constellation`) には `lines` フィールドが明記されていませんが、APIレスポンスには含まれています。
 
 2. データモデル
    - SQLiteによる永続化（旧開発環境）

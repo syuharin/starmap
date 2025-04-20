@@ -224,11 +224,14 @@ def init_database():
             ConstellationLine(constellation_id=orion.id, star1_id=mintaka.id, star2_id=rigel.id),
         ]
         db.add_all(constellation_lines)
-        
+
+        # 夏の大三角のデータを追加
+        add_summer_triangle_data(db)
+
         # コミット
         db.commit()
         print("初期データの追加が完了しました。")
-        
+
     except Exception as e:
         print(f"エラーが発生しました: {e}")
         db.rollback()
@@ -237,6 +240,77 @@ def init_database():
         db.close()
     
     print("データベースの初期化が完了しました。")
+
+
+# Placeholder function for adding parent constellations if needed
+def add_parent_constellation(db, name, name_jp, abbr, season, ra_center, dec_center, desc):
+    """指定された略符の星座が存在しない場合、簡易的なデータを追加する"""
+    constellation = db.query(Constellation).filter_by(abbreviation=abbr).first()
+    if not constellation:
+        constellation = Constellation(
+            name=name,
+            name_jp=name_jp,
+            abbreviation=abbr,
+            season=season,
+            right_ascension_center=ra_center,
+            declination_center=dec_center,
+            description=desc
+        )
+        db.add(constellation)
+        db.flush() # Get ID
+        print(f"{name_jp} ({abbr}) を追加しました。")
+    return constellation
+
+def add_summer_triangle_data(db):
+    """夏の大三角関連のデータを追加"""
+    print("夏の大三角のデータを追加しています...")
+
+    # 1. 親星座を追加 (存在しない場合)
+    #    簡易的なデータを設定。必要に応じて後で詳細化。
+    lyra = add_parent_constellation(db, "Lyra", "こと座", "Lyr", "夏", 279.2, 38.8, "竪琴をかたどった星座。")
+    aquila = add_parent_constellation(db, "Aquila", "わし座", "Aql", "夏", 297.7, 8.9, "大神ゼウスの使いの鷲を表す星座。")
+    cygnus = add_parent_constellation(db, "Cygnus", "はくちょう座", "Cyg", "夏", 310.3, 45.3, "白鳥の姿をした星座。天の川に翼を広げる。")
+
+    # 2. 夏の大三角を構成する星を追加 (既存チェックは省略、init_dbは初期化前提のため)
+    #    もしinit_dbが追記モードで使われる可能性があるなら、星の存在チェックも必要
+    vega = Star(
+        name="Vega", common_name_jp="ベガ", bayer_designation="α Lyr", hip_number=91262,
+        right_ascension=279.2346, declination=38.7836, magnitude=0.03, constellation_id=lyra.id
+    )
+    altair = Star(
+        name="Altair", common_name_jp="アルタイル", bayer_designation="α Aql", hip_number=97649,
+        right_ascension=297.696, declination=8.8683, magnitude=0.77, constellation_id=aquila.id
+    )
+    deneb = Star(
+        name="Deneb", common_name_jp="デネブ", bayer_designation="α Cyg", hip_number=102098,
+        right_ascension=310.3578, declination=45.2803, magnitude=1.25, constellation_id=cygnus.id
+    )
+    stars_to_add = [vega, altair, deneb]
+    db.add_all(stars_to_add)
+    db.flush() # 星のIDを取得
+
+    # 3. 夏の大三角アステリズムを追加
+    summer_triangle = Constellation(
+        name="Summer Triangle",
+        name_jp="夏の大三角",
+        abbreviation="SUMTRI", # ユーザー指定
+        season="夏",
+        right_ascension_center=295.76, # 平均座標
+        declination_center=30.98,    # 平均座標
+        description="こと座のベガ、わし座のアルタイル、はくちょう座のデネブを結んでできる、夏を代表するアステリズム。"
+    )
+    db.add(summer_triangle)
+    db.flush() # アステリズムのIDを取得
+
+    # 4. 夏の大三角の線を追加
+    summer_triangle_lines = [
+        ConstellationLine(constellation_id=summer_triangle.id, star1_id=vega.id, star2_id=altair.id),
+        ConstellationLine(constellation_id=summer_triangle.id, star1_id=altair.id, star2_id=deneb.id),
+        ConstellationLine(constellation_id=summer_triangle.id, star1_id=deneb.id, star2_id=vega.id),
+    ]
+    db.add_all(summer_triangle_lines)
+    print("夏の大三角のデータの追加が完了しました。")
+
 
 if __name__ == "__main__":
     init_database()
