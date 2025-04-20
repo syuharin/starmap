@@ -27,27 +27,19 @@
        BE --> DB[データベース (PostgreSQL on Neon)];
    ```
 
-### フロントエンドアーキテクチャ
+### フロントエンドアーキテクチャ (`src/app`)
 1. コンポーネント設計
-   - 共有コンポーネントパターン
-   - プラットフォーム固有の実装分離
-   - プレゼンテーション/コンテナパターン
-   - モバイルファーストデザイン
+   - 機能ベースのコンポーネント分割
+   - プレゼンテーション/コンテナパターン (部分的に適用)
+   - レスポンシブデザイン
 
 2. レンダリング戦略
-   - デスクトップ：Three.js 3D描画
-   - モバイル：SVGベース2D描画
-   - パフォーマンス最適化パターン
+   - Three.js (@react-three/fiber) による3D描画 (PC/モバイル共通)
+   - パフォーマンス最適化パターン (モバイル含む)
    - メモリ管理パターン
 
-3. モバイル対応パターン
-   - SVGベースレンダリング
-   - タッチインタラクション最適化
-   - レスポンシブデザインパターン
-   - パフォーマンス最適化パターン
-
-2. 状態管理
-   - Redux Toolkitによる中央集権的状態管理
+3. 状態管理
+   - Redux Toolkitによる中央集権的状態管理 (検討中、現在は主にローカルステート)
    - ローカルステート活用
    - メモ化による最適化
 
@@ -80,18 +72,10 @@
 1. フロントエンド
    - Observer Pattern（イベント処理）
    - Factory Pattern（コンポーネント生成）
-   - Strategy Pattern（描画方式の切り替え）
    - Command Pattern（操作履歴）
-   - Adapter Pattern（プラットフォーム互換性）
-   - Bridge Pattern（実装の抽象化）
-   - Composite Pattern（SVG要素の構造化）
-   - Decorator Pattern（SVG要素の装飾）
-
-2. モバイル実装パターン
-   - Platform Abstraction Layer
-   - Feature Detection Pattern
-   - Responsive Layout Pattern
-   - Touch Interaction Pattern
+   - Adapter Pattern（外部サービス連携など）
+   - レスポンシブデザインパターン
+   - タッチインタラクションパターン (実装予定)
 
 2. バックエンド
    - Repository Pattern（データアクセス）

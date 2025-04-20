@@ -1,7 +1,7 @@
 # 星図表示アプリケーション
 
 ## 概要
-本アプリケーションは、現在位置や特定の日時に基づいて夜空の星図を表示するPC向けアプリケーションです。
+本アプリケーションは、現在位置や特定の日時に基づいて夜空の星図を表示するWebアプリケーション (PC/モバイル対応) です。
 GPSや手動入力による位置情報、カレンダーによる日時指定に対応し、インタラクティブな星図表示を実現します。
 
 ## 主な機能
@@ -32,7 +32,6 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 
 ## 技術スタック
 ### フロントエンド
-- Electron
 - React
 - Three.js (WebGL)
 - @react-three/fiber
@@ -108,14 +107,8 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-3. モバイル版の開発サーバーの起動（必要な場合、新しいターミナルで実行）
-```bash
-npm run dev:mobile
-```
-
-4. アプリケーションへのアクセス
+3. アプリケーションへのアクセス
 - フロントエンド: http://localhost:3002
-- モバイル版: http://localhost:3003
 - バックエンドAPI: http://localhost:8000
 
 ### 現在の制限事項
@@ -153,20 +146,12 @@ npm run dev:mobile
 1. [Vercel](https://vercel.com/) でアカウントを作成し、GitHubリポジトリと連携します。
 2. 新しいプロジェクトを作成し、以下の設定を行います。
    - **Framework Preset**: `Create React App` または `React` (推奨)
-   - **Build Command**: `npm run build:mobile`
+   - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
    - **Install Command**: `npm install`
 3. 環境変数を設定します。
    - `REACT_APP_API_URL`: Replitで控えておいたバックエンドの公開URL
 4. デプロイを実行します。デプロイ完了後、公開されたフロントエンドのURLをReplitの `FRONTEND_URL` 環境変数に設定します（必要であればReplitを再起動）。
-
-### デスクトップアプリケーションのビルド (旧方式)
-```bash
-# Electronアプリケーションのビルド
-npm run build
-npm run package
-```
-ビルドされたアプリケーションは `dist` ディレクトリに生成されます。
 
 ## 開発プロセス
 

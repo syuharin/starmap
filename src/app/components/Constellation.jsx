@@ -5,7 +5,7 @@ import { Line, Html, OrbitControls } from '@react-three/drei';
 import { CompassRose } from './CompassRose';
 import { AltitudeLines } from './AltitudeLines';
 import * as THREE from 'three';
-import { fetchConstellations } from '../services/starService';
+import { fetchConstellations } from '../services/starService'; // Updated path again
 
 // 星を表示するコンポーネント
 const Star = ({ position, magnitude, name }) => {

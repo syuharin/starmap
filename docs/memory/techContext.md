@@ -7,13 +7,11 @@
    - Electron（デスクトップアプリケーション）
    - React（UIフレームワーク）
    - TypeScript（型安全性）
-   - React Native Web（モバイル対応）
 
 2. UI/UXライブラリ
    - Material-UI（UIコンポーネント）
    - @react-three/fiber（Three.js React バインディング）
    - @react-three/drei（Three.js ユーティリティ）
-   - React Native Paper（モバイルUI）
 
 3. 状態管理
    - Redux Toolkit
@@ -182,11 +180,8 @@ python main.py
 
 2. フロントエンド起動
 ```bash
-# デスクトップ版
+# フロントエンド (統合版)
 npm run dev:frontend
-
-# モバイル版
-npm run dev:mobile
 ```
 
 ## ツール群
@@ -257,9 +252,9 @@ npm run dev:mobile
    - 環境変数による設定管理
      - `REACT_APP_API_URL`：バックエンドAPIのURL
    - ビルド設定
-     - ビルドコマンド：`npm run build:mobile`
+     - ビルドコマンド：`npm run build`
      - 出力ディレクトリ：`dist`
-     - ルートファイル：`mobile.html`
+     - ルートファイル：`index.html`
    - CI/CD連携
      - GitHub連携
      - プレビューデプロイ
@@ -288,7 +283,6 @@ npm run dev:mobile
    - webpack本番設定
    - アセット最適化
    - コード分割
-   - モバイル向け最適化
    - 環境変数の注入（DefinePlugin）
 
 2. バックエンド
@@ -303,10 +297,9 @@ npm run dev:mobile
    - 自動更新機能
    - クロスプラットフォームビルド
 
-2. モバイルアプリ (Web)
-   - Web First開発
-   - Progressive Web App
-   - ネイティブ機能の段階的統合
+2. Webアプリケーション (PC/モバイル)
+   - レスポンシブデザイン
+   - Progressive Web App (検討中)
    - Vercelホスティング
 
 ## バージョン管理

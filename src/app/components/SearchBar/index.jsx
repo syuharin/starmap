@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Autocomplete, TextField, CircularProgress } from '@mui/material';
-import { searchCelestialObjects } from '../../services/starService';
+import { searchCelestialObjects } from '../services/starService'; // Updated path again
 import StarIcon from '@mui/icons-material/Star';
 import PublicIcon from '@mui/icons-material/Public';
 

@@ -15,8 +15,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HeightIcon from '@mui/icons-material/Height';
 import dayjs from 'dayjs';
-import { DateTimePicker } from '../../shared/components/DateTimePicker';
-import { SearchBar } from '../../shared/components/SearchBar';
+import { DateTimePicker } from './components/DateTimePicker'; // Updated path again
+import { SearchBar } from './components/SearchBar'; // Updated path again
 
 // スターマップコンポーネント
 function StarMap({ showCompass, showAltitude, selectedDate, focusedObject }) {

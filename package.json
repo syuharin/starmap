@@ -2,16 +2,14 @@
   "name": "starmap",
   "version": "1.0.0",
   "description": "星図表示アプリケーション",
-  "main": "src/frontend/main.js",
+  "main": "src/app/main.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "start": "electron .",
     "dev:electron": "set NODE_ENV=development && electron .",
     "dev:backend": "cd src/backend && python -m uvicorn main:app --reload --port 8000",
     "dev:frontend": "webpack serve --mode development --port 3002",
-    "dev:mobile": "webpack serve --mode development --port 3003 --env platform=mobile",
     "build": "webpack --mode production",
-    "build:mobile": "webpack --mode production --env platform=mobile",
     "test": "jest",
     "test:visual": "jest src/utils/test/starmap.test.js",
     "test:visual:dev": "concurrently \"npm run dev:frontend\" \"wait-on http://localhost:3002 && npm run test:visual\""

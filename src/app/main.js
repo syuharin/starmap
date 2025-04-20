@@ -21,7 +21,7 @@ function createWindow() {
     // 開発ツールを開く
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../dist', 'index.html')); // Updated path
   }
 }
 

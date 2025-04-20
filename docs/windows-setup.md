@@ -64,7 +64,7 @@ cd ../..
    - `.env` ファイルに以下の内容を記述し、PostgreSQLの接続情報に合わせて編集します。
      ```dotenv
      DATABASE_URL=postgresql://your_user:your_password@localhost:5432/starmap
-     FRONTEND_URL=http://localhost:3003
+     FRONTEND_URL=http://localhost:3002 # 開発用フロントエンドURL (統合後)
      ENVIRONMENT=development
      ```
 
@@ -80,15 +80,9 @@ cd ../..
 npm run dev:frontend
 ```
 
-3. モバイル版開発サーバーの起動（必要な場合、新しいコマンドプロンプトで）
-```cmd
-npm run dev:mobile
-```
-
 ## アクセス方法
 
 - フロントエンド: http://localhost:3002
-- モバイル版: http://localhost:3003
 - バックエンドAPI: http://localhost:8000
 
 ## トラブルシューティング
