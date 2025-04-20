@@ -1,0 +1,18 @@
+hip_number,name,common_name_jp,bayer_designation,right_ascension,declination,magnitude,constellation_abbreviation
+27989,Betelgeuse,ベテルギウス,α Ori,88.7929,7.4070,0.42,Ori
+24436,Rigel,リゲル,β Ori,78.6345,-8.2016,0.18,Ori
+25336,Bellatrix,ベラトリックス,γ Ori,81.2828,6.3497,1.64,Ori
+27366,Saiph,サイフ,κ Ori,86.9391,-9.6697,2.07,Ori
+26727,Alnitak,アルニタク,ζ Ori,85.1897,-1.9425,1.77,Ori
+26311,Alnilam,アルニラム,ε Ori,84.0534,-1.2019,1.69,Ori
+25930,Mintaka,ミンタカ,δ Ori,83.0016,-0.2991,2.23,Ori
+54061,Dubhe,ドゥベー,α UMa,165.932,61.751,1.79,UMa
+53910,Merak,メラク,β UMa,165.460,56.382,2.37,UMa
+58001,Phecda,フェクダ,γ UMa,178.457,53.694,2.44,UMa
+59774,Megrez,メグレズ,δ UMa,183.856,57.032,3.31,UMa
+62956,Alioth,アリオト,ε UMa,193.507,55.959,1.77,UMa
+65378,Mizar,ミザール,ζ UMa,200.981,54.925,2.27,UMa
+67301,Alkaid,アルカイド,η UMa,206.885,49.313,1.86,UMa
+91262,Vega,ベガ,α Lyr,279.2346,38.7836,0.03,Lyr
+97649,Altair,アルタイル,α Aql,297.696,8.8683,0.77,Aql
+102098,Deneb,デネブ,α Cyg,310.3578,45.2803,1.25,Cyg

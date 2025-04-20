@@ -89,10 +89,10 @@ cd ../..
 5. データベースの初期化
 ```bash
 cd src/backend
-python init_db.py
-cd ../..
-```
-この手順でオリオン座、北斗七星、夏の大三角の基本データがデータベースに登録されます。
+ python init_db.py
+ cd ../..
+ ```
+この手順で、まず既存のデータベースの内容がクリアされ、次に `src/backend/data/` ディレクトリにあるCSVファイル（`constellations.csv`, `stars.csv`, `constellation_lines.csv`）から初期データ（オリオン座、北斗七星、夏の大三角など）がデータベースに登録されます。
 
 ### 開発サーバーの起動
 
@@ -131,7 +131,7 @@ npm run dev:frontend
    - `DATABASE_URL`: Neonで取得したデータベース接続URL
    - `FRONTEND_URL`: VercelでデプロイするフロントエンドのURL（後述）
    - `ENVIRONMENT`: `production`
-3. Replitの「Shell」タブでデータベースを初期化します。
+3. Replitの「Shell」タブでデータベースを初期化します。このコマンドは既存データをクリアし、CSVファイルからデータを読み込みます。
    ```bash
    python src/backend/init_db.py
    ```

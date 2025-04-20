@@ -29,11 +29,10 @@
    - FastAPI
    - Uvicorn（ASGIサーバー）
 
-2. データベース
-   - SQLite（開発環境）
-   - PostgreSQL（本番環境）
-   - SQLAlchemy（ORM）
-   - psycopg2-binary（PostgreSQL接続）
+ 2. データベース
+    - PostgreSQL（ローカル開発環境、本番環境はNeon）
+    - SQLAlchemy（ORM）
+    - psycopg2-binary（PostgreSQL接続）
    - Alembic（マイグレーション）
 
 3. 天体計算
@@ -164,12 +163,13 @@ pip install -r requirements.txt
    ENVIRONMENT=development
    ```
 
-6. データベース初期化
-```bash
-cd src/backend
-python init_db.py
-cd ../..
-```
+ 6. データベース初期化
+ ```bash
+ cd src/backend
+ python init_db.py
+ cd ../..
+ ```
+ このコマンドは、まず既存のデータベースの内容をクリアし、次に `src/backend/data/` ディレクトリにあるCSVファイルから初期データを読み込んで登録します。
 
 ### 開発サーバー
 1. バックエンド起動
@@ -240,10 +240,10 @@ npm run dev:frontend
    - DE421 エフェメリス
    - IAU 2000/2006規約
 
-3. 補助データ
-   - 星座線データ
-   - 星座境界データ
-   - 天体名データ（多言語）
+ 3. 補助データ
+    - 星座線データ（初期データは `src/backend/data/constellation_lines.csv` から）
+    - 星座境界データ
+    - 天体名データ（多言語、初期データは `src/backend/data/constellations.csv`, `src/backend/data/stars.csv` から）
 
 ## デプロイメント
 
@@ -272,10 +272,10 @@ npm run dev:frontend
 3. データベース（Neon PostgreSQL）
    - 無料プラン
    - 自動バックアップ (Neonの機能)
-   - データ初期化
-     - `src/backend/init_db.py` スクリプトでテーブル作成と初期データ投入
-
-4. データ移行 (不要)
+    - データ初期化
+      - `src/backend/init_db.py` スクリプトでテーブル作成と初期データ（CSVから読み込み）投入
+ 
+ 4. データ移行 (不要)
    - SQLiteからの移行スクリプト (`migrate_to_postgres.py`) は使用せず、`init_db.py` で初期化
 
 ### ビルド設定

@@ -124,9 +124,10 @@
    - 独立したテスト環境の構築
    - 自動化されたクリーンアップ
    - エラーハンドリングの強化
-2. ローカルデータベース
-   - PostgreSQLを使用（`.env`ファイルで`DATABASE_URL`を設定）
-   - 開発環境と本番環境のDBを統一
+ 2. ローカルデータベース
+    - PostgreSQLを使用（`.env`ファイルで`DATABASE_URL`を設定）
+    - 開発環境と本番環境のDBを統一
+    - 初期データは `src/backend/init_db.py` によって `src/backend/data/` 内のCSVファイルから投入される
 
 3. テスト戦略
    - ヘッドレステストの実装
@@ -156,9 +157,9 @@
    - バックエンド：Replitへのデプロイ
      - 環境変数による設定管理 (`DATABASE_URL`, `FRONTEND_URL`)
      - `.replit` ファイルによる設定済み
-   - データベース：Neon (PostgreSQL)
-     - SQLiteからの移行スクリプト (未使用、`init_db.py` で初期化)
-     - 自動バックアップ (Neonの機能)
+    - データベース：Neon (PostgreSQL)
+      - 初期化は `src/backend/init_db.py` で実行（既存データをクリアし、CSVからデータを投入）
+      - 自動バックアップ (Neonの機能)
 
 ### アーキテクチャ改善
 4. API設計の標準化
