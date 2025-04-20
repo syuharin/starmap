@@ -67,12 +67,16 @@
      - データベース接続の環境変数化
      - CORS設定の改善
      - データ移行スクリプトの作成
-   - Infrastructure as Code
-     - render.yamlの作成
+   - Infrastructure as Code (Replitは `.replit` ファイルで設定)
    - ローカル環境でのPostgreSQL動作確認完了
      - 依存関係の解決 (`sse-starlette` アンインストール)
      - DB初期化 (`init_db.py`)
      - バックエンドサーバー起動確認
+   - **クラウドデプロイ完了 (Vercel/Replit/Neon)**
+     - フロントエンド (Vercel): 環境変数 `REACT_APP_API_URL` 設定済み、動作確認済み
+     - バックエンド (Replit): 環境変数 `DATABASE_URL`, `FRONTEND_URL` 設定済み、動作確認済み
+     - バックエンド (Replit): CORS設定更新済み (Vercelからのリクエストを許可)
+     - データベース (Neon): 接続・初期化完了、動作確認済み
 
 ## アクティブな課題
 
@@ -120,6 +124,9 @@
    - 位置情報の精度向上
    - 方位磁石との連携
    - リアルタイム更新
+
+### 解決済みの課題
+- **クラウドデプロイ:** Vercel/Replit/Neonへのデプロイと動作確認完了
 
 2. 天体データ
    - より多くの星座の追加
@@ -176,15 +183,14 @@
 
 4. デプロイ戦略
    - フロントエンド：Vercelへのデプロイ
-     - 環境変数による設定管理
+     - 環境変数による設定管理 (`REACT_APP_API_URL`)
      - モバイル版ビルドの最適化
-   - バックエンド：Renderへのデプロイ
-     - PostgreSQLへの移行
-     - 環境変数による設定管理
-     - Infrastructure as Code（render.yaml）
-   - データベース：Render PostgreSQL
-     - SQLiteからの移行スクリプト
-     - 自動バックアップ
+   - バックエンド：Replitへのデプロイ
+     - 環境変数による設定管理 (`DATABASE_URL`, `FRONTEND_URL`)
+     - `.replit` ファイルによる設定
+   - データベース：Neon (PostgreSQL)
+     - SQLiteからの移行スクリプト (未使用、`init_db.py` で初期化)
+     - 自動バックアップ (Neonの機能)
 
 ### アーキテクチャ改善
 4. API設計の標準化

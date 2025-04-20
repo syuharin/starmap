@@ -26,9 +26,9 @@
      - TypeScript
      - GitLens
 
-5. SQLite
-   - [SQLite公式サイト](https://www.sqlite.org/download.html)からWindows用のバイナリをダウンロード
-   - ダウンロードしたファイルを適切なディレクトリに展開
+5. PostgreSQL
+   - [PostgreSQL公式サイト](https://www.postgresql.org/download/)からWindows用のインストーラーをダウンロードしてインストールします。
+   - インストール中にデータベースとユーザーを作成します（例: データベース名 `starmap`, ユーザー名 `your_user`, パスワード `your_password`）。
 
 ## プロジェクトのセットアップ
 
@@ -59,11 +59,20 @@ python init_db.py
 cd ../..
 ```
 
-## アプリケーションの起動
+4. 環境変数の設定
+   - プロジェクトルートに `.env` という名前のファイルを作成します。
+   - `.env` ファイルに以下の内容を記述し、PostgreSQLの接続情報に合わせて編集します。
+     ```dotenv
+     DATABASE_URL=postgresql://your_user:your_password@localhost:5432/starmap
+     FRONTEND_URL=http://localhost:3003
+     ENVIRONMENT=development
+     ```
 
-1. バックエンド開発サーバーの起動
+5. データベースの初期化
 ```cmd
-npm run dev:backend
+cd src/backend
+python init_db.py
+cd ../..
 ```
 
 2. フロントエンド開発サーバーの起動（新しいコマンドプロンプトで）
@@ -96,9 +105,10 @@ npm run dev:mobile
    - 使用するポート（3002, 3003, 8000）が他のプロセスで使用されていないか確認
    - タスクマネージャーで確認し、必要に応じて該当プロセスを終了
 
-4. データベース関連のエラー
-   - `src/backend`ディレクトリに`database.sqlite`が存在するか確認
-   - 存在しない場合は`python init_db.py`を実行
+4. データベース関連のエラー (PostgreSQL)
+   - PostgreSQLサービスが実行中か確認します。
+   - `.env` ファイルの `DATABASE_URL` が正しいか確認します。
+   - データベースが存在しない、またはテーブルが作成されていない場合は、`cd src/backend` してから `python init_db.py` を実行します。
 
 ## 開発のヒント
 

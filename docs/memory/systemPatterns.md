@@ -9,15 +9,23 @@
    - テスト容易性の確保
 
 2. マイクロサービス的アプローチ
-   - フロントエンド（Electron）
-   - バックエンド（FastAPI）
-   - データベース（SQLite）
+   - フロントエンド（React, Vercelでホスト）
+   - バックエンド（FastAPI, Replitでホスト）
+   - データベース（PostgreSQL, Neonでホスト）
 
 3. レイヤー構造
    - プレゼンテーション層（React Components）
    - ビジネスロジック層（Services）
    - データアクセス層（Repositories）
    - インフラストラクチャ層（API/DB）
+
+4. デプロイメントアーキテクチャ図
+   ```mermaid
+   graph TD
+       User[ユーザー] --> FE[フロントエンド (React on Vercel)];
+       FE --> BE[バックエンド (FastAPI on Replit)];
+       BE --> DB[データベース (PostgreSQL on Neon)];
+   ```
 
 ### フロントエンドアーキテクチャ
 1. コンポーネント設計
@@ -61,9 +69,10 @@
 
 2. データモデル
    - SQLiteによる永続化（旧開発環境）
-   - PostgreSQLによる永続化（ローカル開発環境・本番環境）
+   - PostgreSQLによる永続化（ローカル開発環境）
+   - Neon (PostgreSQL) による永続化（本番環境）
    - モデル間の関係定義
-   - マイグレーション管理
+   - マイグレーション管理 (Alembic, 現在は未使用)
 
 ## 設計パターン
 

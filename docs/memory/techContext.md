@@ -265,30 +265,23 @@ npm run dev:mobile
      - プレビューデプロイ
      - 自動デプロイ
 
-2. バックエンド（Render）
-   - Web Service設定
-     - ビルドコマンド：`pip install -r src/backend/requirements.txt`
-     - スタートコマンド：`cd src/backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
-     - リージョン：`singapore`（アジア圏）
-   - 環境変数
-     - `DATABASE_URL`：PostgreSQL接続URL
-     - `FRONTEND_URL`：フロントエンドURL
-     - `ENVIRONMENT`：`production`
-   - Infrastructure as Code
-     - `render.yaml`による設定
+2. バックエンド（Replit）
+   - Replit設定 (`.replit` ファイル)
+     - スタートコマンド：`cd src/backend && uvicorn main:app --host 0.0.0.0 --port 8080`
+   - 環境変数 (Secrets)
+     - `DATABASE_URL`：Neon PostgreSQL接続URL
+     - `FRONTEND_URL`：VercelフロントエンドURL
+     - `ENVIRONMENT`：`production` または `development`
+   - 依存関係: `src/backend/requirements.txt` を使用
 
-3. データベース（Render PostgreSQL）
+3. データベース（Neon PostgreSQL）
    - 無料プラン
-   - 自動バックアップ
-   - データ移行
-     - SQLiteからの移行スクリプト
-     - 初期データのシード
+   - 自動バックアップ (Neonの機能)
+   - データ初期化
+     - `src/backend/init_db.py` スクリプトでテーブル作成と初期データ投入
 
-4. データ移行
-   - `migrate_to_postgres.py`スクリプト
-   - テーブル作成
-   - データコピー
-   - ID参照の維持
+4. データ移行 (不要)
+   - SQLiteからの移行スクリプト (`migrate_to_postgres.py`) は使用せず、`init_db.py` で初期化
 
 ### ビルド設定
 1. フロントエンド
@@ -310,7 +303,7 @@ npm run dev:mobile
    - 自動更新機能
    - クロスプラットフォームビルド
 
-2. モバイルアプリ
+2. モバイルアプリ (Web)
    - Web First開発
    - Progressive Web App
    - ネイティブ機能の段階的統合

@@ -112,8 +112,8 @@
 ## 7. 技術選定
 
 ### 7.1 開発技術
-- **フロントエンド:** Electron + WebGL（React/Three.js）
-- **バックエンド:** Python（FastAPI）、SQLite
+- **フロントエンド:** React + WebGL（Three.js）
+- **バックエンド:** Python（FastAPI）、PostgreSQL (ローカル), Neon (本番)
 - **UI/UXライブラリ:** Material-UI
 - **状態管理:** Redux Toolkit
 

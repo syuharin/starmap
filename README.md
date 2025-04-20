@@ -43,7 +43,7 @@ GPSや手動入力による位置情報、カレンダーによる日時指定�
 ### バックエンド
 - Python
 - FastAPI
-- SQLite
+- PostgreSQL (ローカル開発), Neon (本番)
 - Skyfield（天体計算）
 
 ## セットアップ手順
@@ -78,7 +78,16 @@ pip install -r requirements.txt
 cd ../..
 ```
 
-4. データベースの初期化
+4. ローカルデータベースの設定 (PostgreSQL)
+   - ローカルにPostgreSQLをインストールし、データベース（例: `starmap`）とユーザーを作成します。
+   - プロジェクトルートに `.env` ファイルを作成し、以下の形式でデータベース接続情報を記述します。
+     ```dotenv
+     DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/starmap
+     FRONTEND_URL=http://localhost:3003 # 開発用フロントエンドURL
+     ENVIRONMENT=development
+     ```
+
+5. データベースの初期化
 ```bash
 cd src/backend
 python init_db.py
@@ -116,34 +125,42 @@ npm run dev:mobile
 
 ## デプロイ手順
 
-### クラウドデプロイ
-本アプリケーションはVercel（フロントエンド）とRender（バックエンド）を使用したクラウドデプロイに対応しています。
+### クラウドデプロイ (Vercel / Replit / Neon)
+本アプリケーションは以下のサービスを使用したクラウドデプロイに対応しています。
+
+#### データベース（Neon）
+1. [Neon](https://neon.tech/) でアカウントを作成し、新しいPostgreSQLプロジェクトを作成します。
+2. 作成したデータベースの接続URL（Connection String）を取得します。
+
+#### バックエンド（Replit）
+1. [Replit](https://replit.com/) でアカウントを作成し、GitHubリポジトリをPythonプロジェクトとしてインポートします。
+2. Replitの「Secrets」（環境変数）に以下を設定します。
+   - `DATABASE_URL`: Neonで取得したデータベース接続URL
+   - `FRONTEND_URL`: VercelでデプロイするフロントエンドのURL（後述）
+   - `ENVIRONMENT`: `production`
+3. Replitの「Shell」タブでデータベースを初期化します。
+   ```bash
+   python src/backend/init_db.py
+   ```
+4. Replitの `.replit` ファイルを以下のように設定します（または確認します）。
+   ```toml
+   run = "cd src/backend && uvicorn main:app --host 0.0.0.0 --port 8080"
+   language = "python3"
+   ```
+5. Replitの「Run」ボタンを押してバックエンドサーバーを起動します。起動後、公開URL（例: `https://<your-repl-name>.replit.dev`）を控えておきます。
 
 #### フロントエンド（Vercel）
-1. Vercelアカウントを作成し、GitHubリポジトリと連携
-2. 新しいプロジェクトを作成し、以下の設定を行う：
-   - **Framework Preset**: Other
+1. [Vercel](https://vercel.com/) でアカウントを作成し、GitHubリポジトリと連携します。
+2. 新しいプロジェクトを作成し、以下の設定を行います。
+   - **Framework Preset**: `Create React App` または `React` (推奨)
    - **Build Command**: `npm run build:mobile`
    - **Output Directory**: `dist`
    - **Install Command**: `npm install`
-3. 環境変数を設定：
-   - `REACT_APP_API_URL`: RenderでデプロイされるバックエンドのURL
+3. 環境変数を設定します。
+   - `REACT_APP_API_URL`: Replitで控えておいたバックエンドの公開URL
+4. デプロイを実行します。デプロイ完了後、公開されたフロントエンドのURLをReplitの `FRONTEND_URL` 環境変数に設定します（必要であればReplitを再起動）。
 
-#### バックエンド（Render）
-1. Renderアカウントを作成し、GitHubリポジトリと連携
-2. `render.yaml`を使用して新しいBlueprint（設計図）を作成
-   - Renderダッシュボードで「New Blueprint」を選択
-   - リポジトリとブランチを選択
-   - `render.yaml`が自動的に検出され、設定が読み込まれる
-3. 必要に応じて環境変数を調整：
-   - `FRONTEND_URL`: VercelでデプロイされるフロントエンドのURL
-4. デプロイ完了後、データ移行を実行：
-   ```
-   cd src/backend
-   python migrate_to_postgres.py
-   ```
-
-### デスクトップアプリケーションのビルド
+### デスクトップアプリケーションのビルド (旧方式)
 ```bash
 # Electronアプリケーションのビルド
 npm run build
