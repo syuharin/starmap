@@ -10,6 +10,7 @@
     "dev:backend": "cd src/backend && python -m uvicorn main:app --reload --port 8000",
     "dev:frontend": "webpack serve --mode development --port 3002",
     "build": "webpack --mode production",
+    "lint": "eslint src/app/**/*.{js,jsx}",
     "test": "jest",
     "test:visual": "jest src/utils/test/starmap.test.js",
     "test:visual:dev": "concurrently \"npm run dev:frontend\" \"wait-on http://localhost:3002 && npm run test:visual\""
@@ -46,6 +47,7 @@
     "concurrently": "^8.2.2",
     "css-loader": "^6.10.0",
     "electron-builder": "^24.9.1",
+    "eslint": "^9.25.0",
     "html-webpack-plugin": "^5.6.0",
     "jest": "^29.7.0",
     "puppeteer": "^24.2.1",

@@ -1,0 +1,35 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+    -   id: trailing-whitespace # 行末の不要な空白を削除
+    -   id: end-of-file-fixer   # ファイル末尾に空行を確保
+    -   id: check-yaml          # YAMLファイルの構文チェック
+    -   id: check-json          # JSONファイルの構文チェック
+    -   id: check-added-large-files # 大きすぎるファイルが追加されるのを防ぐ
+
+-   repo: https://github.com/pycqa/flake8
+    rev: 7.1.0
+    hooks:
+    -   id: flake8
+        args: ['--max-line-length=127', '--max-complexity=10'] # CIと同じ設定
+        files: ^src/backend/ # バックエンドのPythonファイルのみ対象
+
+# ESLintのフックを追加するには、まずローカルにESLintがインストールされている必要があります。
+# package.jsonのdevDependenciesにeslintがあれば、以下の設定が利用可能です。
+# もしESLintがグローバルインストールされている場合や、
+# pre-commit経由でインストールしたい場合は設定が異なります。
+# ここではローカルのnode_modulesにあるeslintを使う想定です。
+-   repo: local
+    hooks:
+    -   id: eslint
+        name: eslint
+        entry: npx eslint --fix # --fixオプションで自動修正を試みる
+        language: node
+        files: \.[jt]sx?$ # .js, .jsx, .ts, .tsx ファイルを対象 (プロジェクトに合わせて調整)
+        # types: [javascript] # 必要に応じてtypesを指定
+        # exclude: '^src/backend/' # バックエンドのファイルを除外 (filesで指定済みだが念のため)
+        pass_filenames: true # ファイル名を引数として渡す
+        # additional_dependencies: ['eslint', ...] # package.jsonにない場合
