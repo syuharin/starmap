@@ -29,8 +29,9 @@ jobs:
     - name: ESLintによる静的解析
       run: npm run lint
 
-    - name: フロントエンドのテスト実行
-      run: npm test
+    - name: フロントエンドのテスト実行 (E2E含む)
+      # 開発サーバーを起動し、応答を待ってからテストを実行し、その後サーバーを停止
+      run: npx start-server-and-test dev:frontend http://localhost:3002 test
 
     - name: フロントエンドのビルド
       run: npm run build
