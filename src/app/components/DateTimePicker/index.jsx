@@ -1,15 +1,19 @@
-import React from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker as MuiDateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ja';
-import { IconButton, Box, Dialog, DialogContent } from '@mui/material';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import React from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker as MuiDateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import "dayjs/locale/ja";
+import { IconButton, Box, Dialog, DialogContent } from "@mui/material";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
-dayjs.locale('ja');
+dayjs.locale("ja");
 
-export const DateTimePicker = ({ selectedDate, onDateChange, iconSize = 'medium' }) => {
+export const DateTimePicker = ({
+  selectedDate,
+  onDateChange,
+  iconSize = "medium",
+}) => {
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => {
@@ -37,42 +41,44 @@ export const DateTimePicker = ({ selectedDate, onDateChange, iconSize = 'medium'
         <CalendarTodayIcon fontSize={iconSize} />
       </IconButton>
 
-      <Dialog 
-        open={open} 
+      <Dialog
+        open={open}
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: { xs: '90%', sm: 'auto' },
-            maxWidth: { xs: '90%', sm: 'none' }
-          }
+            width: { xs: "90%", sm: "auto" },
+            maxWidth: { xs: "90%", sm: "none" },
+          },
         }}
       >
         <DialogContent>
-          <Box sx={{ 
-            width: { xs: '100%', sm: '300px' },
-            '& .MuiTextField-root': { width: '100%' }
-          }}>
+          <Box
+            sx={{
+              width: { xs: "100%", sm: "300px" },
+              "& .MuiTextField-root": { width: "100%" },
+            }}
+          >
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ja">
               <MuiDateTimePicker
                 label="日時を選択"
                 value={selectedDate}
                 onChange={handleDateChange}
-                minDateTime={dayjs().subtract(100, 'year')}
-                maxDateTime={dayjs().add(100, 'year')}
+                minDateTime={dayjs().subtract(100, "year")}
+                maxDateTime={dayjs().add(100, "year")}
                 ampm={false}
                 format="YYYY/MM/DD HH:mm"
                 slotProps={{
                   textField: {
                     size: "small",
-                    fullWidth: true
+                    fullWidth: true,
                   },
                   dialog: {
                     sx: {
-                      '& .MuiDialogContent-root': {
-                        padding: { xs: 1, sm: 2 }
-                      }
-                    }
-                  }
+                      "& .MuiDialogContent-root": {
+                        padding: { xs: 1, sm: 2 },
+                      },
+                    },
+                  },
                 }}
               />
             </LocalizationProvider>
