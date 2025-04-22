@@ -17,7 +17,7 @@ export const validateStarPosition = (star, expectedPosition) => {
   };
 
   const tolerance = 0.0001; // 許容誤差
-  const isValid = Object.values(difference).every(diff => diff < tolerance);
+  const isValid = Object.values(difference).every((diff) => diff < tolerance);
 
   console.table({
     starName: star.name,
@@ -39,19 +39,13 @@ export const validateStarPosition = (star, expectedPosition) => {
  * @param {Object} renderState - レンダリング状態
  */
 export const logRenderState = (renderState) => {
-  const {
-    cameraPosition,
-    rotation,
-    scale,
-    viewport,
-    timestamp,
-  } = renderState;
+  const { cameraPosition, rotation, scale, viewport, timestamp } = renderState;
 
-  console.group('レンダリング状態 - ' + new Date(timestamp).toISOString());
-  console.log('カメラ位置:', cameraPosition);
-  console.log('回転:', rotation);
-  console.log('スケール:', scale);
-  console.log('ビューポート:', viewport);
+  console.group("レンダリング状態 - " + new Date(timestamp).toISOString());
+  console.log("カメラ位置:", cameraPosition);
+  console.log("回転:", rotation);
+  console.log("スケール:", scale);
+  console.log("ビューポート:", viewport);
   console.groupEnd();
 };
 
@@ -89,7 +83,7 @@ export const detectErrors = (context) => {
     const glError = context.gl.getError();
     if (glError !== context.gl.NO_ERROR) {
       errors.push({
-        type: 'WebGL',
+        type: "WebGL",
         code: glError,
         message: `WebGLエラー: ${glError}`,
       });
@@ -101,8 +95,8 @@ export const detectErrors = (context) => {
     const memory = window.performance.memory;
     if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.9) {
       errors.push({
-        type: 'Memory',
-        message: 'メモリ使用量が90%を超えています',
+        type: "Memory",
+        message: "メモリ使用量が90%を超えています",
         usage: memory.usedJSHeapSize,
         limit: memory.jsHeapSizeLimit,
       });
@@ -112,14 +106,14 @@ export const detectErrors = (context) => {
   // フレームレートのチェック
   if (context.fps && context.fps < 30) {
     errors.push({
-      type: 'Performance',
-      message: 'フレームレートが30FPS未満です',
+      type: "Performance",
+      message: "フレームレートが30FPS未満です",
       fps: context.fps,
     });
   }
 
   if (errors.length > 0) {
-    console.error('検出されたエラー:', errors);
+    console.error("検出されたエラー:", errors);
   }
 
   return {
@@ -134,7 +128,7 @@ export const detectErrors = (context) => {
  */
 export const DebugConfig = {
   enabled: false,
-  logLevel: 'info', // 'error' | 'warn' | 'info' | 'debug'
+  logLevel: "info", // 'error' | 'warn' | 'info' | 'debug'
   showGrid: false,
   showAxes: false,
   showBoundingBox: false,
@@ -147,5 +141,5 @@ export const DebugConfig = {
  */
 export const updateDebugConfig = (config) => {
   Object.assign(DebugConfig, config);
-  console.log('デバッグ設定を更新:', DebugConfig);
+  console.log("デバッグ設定を更新:", DebugConfig);
 };

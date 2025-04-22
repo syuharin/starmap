@@ -1,21 +1,22 @@
-import os
 import csv
+import os
 from typing import Dict
+
+from database import SessionLocal, engine  # noqa: F841
 from dotenv import load_dotenv
+from models import Base, Constellation, ConstellationLine, Star
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from database import engine, SessionLocal  # noqa: F841
-from models import Base, Star, Constellation, ConstellationLine
 
 # .envファイルから環境変数を読み込む
 load_dotenv()
 
 
 # CSVファイルが配置されているディレクトリ
-DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-CONSTELLATIONS_CSV = os.path.join(DATA_DIR, 'constellations.csv')
-STARS_CSV = os.path.join(DATA_DIR, 'stars.csv')
-CONSTELLATION_LINES_CSV = os.path.join(DATA_DIR, 'constellation_lines.csv')
+DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+CONSTELLATIONS_CSV = os.path.join(DATA_DIR, "constellations.csv")
+STARS_CSV = os.path.join(DATA_DIR, "stars.csv")
+CONSTELLATION_LINES_CSV = os.path.join(DATA_DIR, "constellation_lines.csv")
 
 
 def clear_database(db: Session):
@@ -25,9 +26,9 @@ def clear_database(db: Session):
     # ここでは単純に削除を試みる。依存関係によってはエラーになる可能性があるため、
     # 削除順序を考慮するか、制約を無効化/有効化する処理が必要になる場合がある。
     # まず依存関係の少ないテーブルから削除
-    db.execute(text(f'DELETE FROM {ConstellationLine.__tablename__}'))
-    db.execute(text(f'DELETE FROM {Star.__tablename__}'))
-    db.execute(text(f'DELETE FROM {Constellation.__tablename__}'))
+    db.execute(text(f"DELETE FROM {ConstellationLine.__tablename__}"))
+    db.execute(text(f"DELETE FROM {Star.__tablename__}"))
+    db.execute(text(f"DELETE FROM {Constellation.__tablename__}"))
     db.commit()
     print("データのクリアが完了しました。")
 
@@ -35,17 +36,17 @@ def clear_database(db: Session):
 def _load_constellations(db: Session, constellation_map: Dict[str, int]):
     """星座データをCSVから読み込み、DBに追加"""
     print(f"{CONSTELLATIONS_CSV} から星座データを読み込んでいます...")
-    with open(CONSTELLATIONS_CSV, mode='r', encoding='utf-8') as file:
+    with open(CONSTELLATIONS_CSV, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
             constellation = Constellation(
-                name=row['name'],
-                name_jp=row['name_jp'],
-                abbreviation=row['abbreviation'],
-                season=row['season'],
-                right_ascension_center=float(row['right_ascension_center']),
-                declination_center=float(row['declination_center']),
-                description=row['description']
+                name=row["name"],
+                name_jp=row["name_jp"],
+                abbreviation=row["abbreviation"],
+                season=row["season"],
+                right_ascension_center=float(row["right_ascension_center"]),
+                declination_center=float(row["declination_center"]),
+                description=row["description"],
             )
             db.add(constellation)
             db.flush()  # IDを取得するため
@@ -54,37 +55,45 @@ def _load_constellations(db: Session, constellation_map: Dict[str, int]):
     print("星座データの追加が完了しました。")
 
 
-def _load_stars(db: Session, constellation_map: Dict[str, int], star_map: Dict[int, int]):
+def _load_stars(
+    db: Session, constellation_map: Dict[str, int], star_map: Dict[int, int]
+):
     """星データをCSVから読み込み、DBに追加"""
     print(f"{STARS_CSV} から星データを読み込んでいます...")
-    with open(STARS_CSV, mode='r', encoding='utf-8') as file:
+    with open(STARS_CSV, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            constellation_id = constellation_map.get(row['constellation_abbreviation'])
+            constellation_id = constellation_map.get(row["constellation_abbreviation"])
             if constellation_id is None:
-                print(f"警告: 星 '{row['name']}' の星座略符 '{row['constellation_abbreviation']}' が見つかりません。スキップします。")
+                print(
+                    f"警告: 星 '{row['name']}' の星座略符 '{row['constellation_abbreviation']}' が見つかりません。スキップします。"
+                )
                 continue
 
             # hip_number が空文字列やNoneでないことを確認
-            hip_number_str = row.get('hip_number')
+            hip_number_str = row.get("hip_number")
             if not hip_number_str:
-                print(f"警告: 星 '{row['name']}' の hip_number が無効です。スキップします。")
+                print(
+                    f"警告: 星 '{row['name']}' の hip_number が無効です。スキップします。"
+                )
                 continue
             try:
                 hip_number = int(hip_number_str)
             except ValueError:
-                print(f"警告: 星 '{row['name']}' の hip_number '{hip_number_str}' が整数に変換できません。スキップします。")
+                print(
+                    f"警告: 星 '{row['name']}' の hip_number '{hip_number_str}' が整数に変換できません。スキップします。"
+                )
                 continue
 
             star = Star(
                 hip_number=hip_number,
-                name=row['name'],
-                common_name_jp=row.get('common_name_jp'),  # Optional
-                bayer_designation=row.get('bayer_designation'),  # Optional
-                right_ascension=float(row['right_ascension']),
-                declination=float(row['declination']),
-                magnitude=float(row['magnitude']),
-                constellation_id=constellation_id
+                name=row["name"],
+                common_name_jp=row.get("common_name_jp"),  # Optional
+                bayer_designation=row.get("bayer_designation"),  # Optional
+                right_ascension=float(row["right_ascension"]),
+                declination=float(row["declination"]),
+                magnitude=float(row["magnitude"]),
+                constellation_id=constellation_id,
             )
             db.add(star)
             db.flush()  # IDを取得するため
@@ -93,31 +102,37 @@ def _load_stars(db: Session, constellation_map: Dict[str, int], star_map: Dict[i
     print("星データの追加が完了しました。")
 
 
-def _load_constellation_lines(db: Session, constellation_map: Dict[str, int], star_map: Dict[int, int]):
+def _load_constellation_lines(
+    db: Session, constellation_map: Dict[str, int], star_map: Dict[int, int]
+):
     """星座線データをCSVから読み込み、DBに追加"""
     print(f"{CONSTELLATION_LINES_CSV} から星座線データを読み込んでいます...")
-    with open(CONSTELLATION_LINES_CSV, mode='r', encoding='utf-8') as file:
+    with open(CONSTELLATION_LINES_CSV, mode="r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         lines_to_add = []
         for row in reader:
-            constellation_id = constellation_map.get(row['constellation_abbreviation'])
-            star1_id = star_map.get(int(row['star1_hip']))
-            star2_id = star_map.get(int(row['star2_hip']))
+            constellation_id = constellation_map.get(row["constellation_abbreviation"])
+            star1_id = star_map.get(int(row["star1_hip"]))
+            star2_id = star_map.get(int(row["star2_hip"]))
 
             if constellation_id is None:
-                print(f"警告: 星座線データの星座略符 '{row['constellation_abbreviation']}' が見つかりません。スキップします。")
+                print(
+                    f"警告: 星座線データの星座略符 '{row['constellation_abbreviation']}' が見つかりません。スキップします。"
+                )
                 continue
             if star1_id is None:
-                print(f"警告: 星座線データの星1 HIP '{row['star1_hip']}' が見つかりません。スキップします。")
+                print(
+                    f"警告: 星座線データの星1 HIP '{row['star1_hip']}' が見つかりません。スキップします。"
+                )
                 continue
             if star2_id is None:
-                print(f"警告: 星座線データの星2 HIP '{row['star2_hip']}' が見つかりません。スキップします。")
+                print(
+                    f"警告: 星座線データの星2 HIP '{row['star2_hip']}' が見つかりません。スキップします。"
+                )
                 continue
 
             line = ConstellationLine(
-                constellation_id=constellation_id,
-                star1_id=star1_id,
-                star2_id=star2_id
+                constellation_id=constellation_id, star1_id=star1_id, star2_id=star2_id
             )
             lines_to_add.append(line)
         db.add_all(lines_to_add)

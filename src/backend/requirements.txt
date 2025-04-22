@@ -8,3 +8,5 @@ requests==2.31.0
 python-dotenv==1.0.0
 psycopg2-binary==2.9.9
 pre-commit>=3.0.0 # Added for local pre-commit checks
+black>=24.0.0     # Added for code formatting
+isort>=5.0.0      # Added for import sorting
