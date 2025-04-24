@@ -24,7 +24,7 @@
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
     "@mui/x-date-pickers": "^7.25.0",
-    "@react-three/drei": "^9.92.7",
+    "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.15.12",
     "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.6.2",
