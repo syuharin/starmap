@@ -192,9 +192,13 @@ npm run dev:frontend
    - テスト実行
    - コードスタイルチェック
    - セキュリティスキャン
+   - **ローカル実行:**
+     - フロントエンド: `npm run ci:frontend` (Lint, Test, Build)
+     - バックエンド (Linux/WSL): `bash run_ci_backend.sh` (Deps, Flake8, Pytest)
+     - バックエンド (Windows): `run_ci_backend.bat` (Deps, Flake8, Pytest)
 
 2. コード品質
-   - ESLint（JavaScript）
+   - ESLint（JavaScript/TypeScript, `package.json` に依存関係と `lint` スクリプトを追加済み）
    - Flake8（Python）
    - Prettier（コードフォーマット）
    - TypeScript（型チェック）
