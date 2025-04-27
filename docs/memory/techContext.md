@@ -54,6 +54,7 @@
    - Jest + React Testing Library（フロントエンド）
    - pytest（バックエンド）
    - Puppeteer（ヘッドレステスト）
+     - **注意:** ヘッドレスモードではWebGLのサポートが不安定な場合がある。テスト実行時にWebGL関連のエラーが発生する場合、`--enable-webgl`, `--ignore-gpu-blacklist` などの起動オプション追加や、ヘッドフルモード (`headless: false`) でのデバッグが必要になることがある。
 
 ## 開発環境
 
@@ -91,7 +92,7 @@
 1. プロセス管理
    - 実行中プロセスの確認方法
    - プロセスのクリーンアップ手順
-   - ポート競合の解決方法
+   - ポート競合の解決方法 (`EADDRINUSE`): `netstat -ano | findstr "<ポート番号>"` でプロセスID (PID) を特定し、`taskkill /PID <PID> /F` で強制終了する。
    - メモリリークの対処
 
 2. Windows環境の問題
@@ -111,6 +112,9 @@
    - リソースの解放確認
    - エラーログの確認方法
    - 再試行メカニズムの利用
+   - **ES Module環境での設定ファイル:** `package.json` で `"type": "module"` を指定している場合、CommonJS形式の設定ファイル（例: `babel.config.js`, `webpack.config.js`）は `.cjs` 拡張子に変更する必要がある (`babel.config.cjs`, `webpack.config.cjs`)。ESLint設定 (`eslint.config.js`) 内でこれらの設定ファイルを読み込む場合は、`requireConfigFile: true` を指定する。
+   - **CIスクリプトでのサーバー起動:** E2Eテストなどでフロントエンド・バックエンド両方のサーバーが必要な場合、`concurrently` と `wait-on` を使用してサーバーを並列起動し、準備完了を待機する。`wait-on` では、バックエンドの準備完了確認にルートパス (`/`) ではなく、確実にGETリクエストに応答するエンドポイント（例: `/docs`）を指定する。
+   - **テストセレクタ:** Puppeteerテストで要素を待機する場合、クラス名よりも `data-testid` 属性を使用する方が安定性が高い。
 
 ### IDE/エディタ
 1. VSCode推奨設定
@@ -193,12 +197,12 @@ npm run dev:frontend
    - コードスタイルチェック
    - セキュリティスキャン
    - **ローカル実行:**
-     - フロントエンド: `npm run ci:frontend` (Lint, Test, Build)
+     - フロントエンド: `npm run ci:frontend` (Lint, Test, Build) - サーバー起動とテスト実行を連携済み。
      - バックエンド (Linux/WSL): `bash run_ci_backend.sh` (Deps, Flake8, Pytest)
      - バックエンド (Windows): `run_ci_backend.bat` (Deps, Flake8, Pytest)
 
 2. コード品質
-   - ESLint（JavaScript/TypeScript, `package.json` に依存関係と `lint` スクリプトを追加済み）
+   - ESLint（JavaScript/TypeScript, v9 flat config形式の `eslint.config.js` で設定済み, `@babel/eslint-parser` 使用）
    - Flake8（Python）
    - Prettier（コードフォーマット）
    - TypeScript（型チェック）
