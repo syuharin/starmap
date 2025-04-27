@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { Constellation } from './components/Constellation';
-import { CompassRose } from './components/CompassRose';
+// Canvas, OrbitControls, CompassRose は StarMap コンポーネント内で直接使用されていないため削除
+import { Constellation } from './components/Constellation'; // Constellation は StarMap で使用
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -15,10 +13,10 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HeightIcon from '@mui/icons-material/Height';
 import dayjs from 'dayjs';
-import { DateTimePicker } from './components/DateTimePicker'; // Updated path again
-import { SearchBar } from './components/SearchBar'; // Updated path again
+import { DateTimePicker } from './components/DateTimePicker';
+import { SearchBar } from './components/SearchBar';
 
-// スターマップコンポーネント
+// スターマップコンポーネント (StarMap は App 内で使用)
 function StarMap({ showCompass, showAltitude, selectedDate, focusedObject }) {
   return (
     <Constellation 
@@ -130,8 +128,9 @@ export default function App() {
             overflow: 'hidden'
           }}
           onClick={handleBackgroundClick}
+          data-testid="starmap-container" // Add data-testid
         >
-          <StarMap 
+          <StarMap
             showCompass={showCompass}
             showAltitude={showAltitude}
             selectedDate={selectedDate}

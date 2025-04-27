@@ -9,8 +9,15 @@ const puppeteer = require('puppeteer');
  */
 const launchTestBrowser = async () => {
   return await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    headless: false, // Run in headful mode for visual debugging
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--enable-webgl', // Explicitly enable WebGL
+      '--ignore-gpu-blacklist', // Ignore GPU blacklist (use with caution)
+      // '--use-gl=desktop', // Try forcing desktop GL (might help on some systems)
+      // '--enable-features=VaapiVideoDecoder', // Hardware acceleration hints (might vary)
+    ],
   });
 };
 
@@ -50,9 +57,21 @@ const takeScreenshot = async (page, name) => {
 const validateRendering = async (page) => {
   const results = await page.evaluate(() => {
     // WebGLコンテキストの検証
-    const canvas = document.querySelector('canvas');
-    const gl = canvas?.getContext('webgl') || canvas?.getContext('experimental-webgl');
-    const glError = gl ? gl.getError() : null;
+    const canvas = document.querySelector('canvas'); // Keep only one declaration
+    let gl = null;
+    let glError = 'WebGL context not available'; // Default error message
+    if (canvas) {
+      gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (gl) {
+        glError = gl.getError(); // Get actual error if context exists
+        console.log('[Test Debug] WebGL Error Code:', glError); // Log the error code
+      } else {
+         console.log('[Test Debug] Failed to get WebGL context.');
+      }
+    } else {
+       console.log('[Test Debug] Canvas element not found.');
+    }
+
 
     // パフォーマンスメトリクスの取得
     const performance = window.performance;
@@ -69,7 +88,7 @@ const validateRendering = async (page) => {
 
     return {
       hasWebGL: !!gl,
-      glError,
+      glError: glError, // Use the potentially updated glError
       memoryUsage: memory ? {
         usedJSHeapSize: memory.usedJSHeapSize,
         jsHeapSizeLimit: memory.jsHeapSizeLimit,

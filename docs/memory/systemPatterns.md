@@ -58,6 +58,10 @@
      - 略語を避ける（ra → right_ascension）
      - 明確な意味を持つ名前を使用
      - 一貫性のある命名規則の適用
+   - **星座線データの扱い**:
+     - `/constellations` エンドポイントは、各星座に属する星の情報 (`stars`) に加えて、星座を構成する線 (`lines`) の情報も返却します。
+     - この線情報は、`models.py` で定義された `Constellation` と `ConstellationLine` のリレーションシップ (`constellation.lines`) を利用して、API実装 (`main.py`) 内で動的に取得・整形され、レスポンスに含まれます。
+     - 注意点として、対応するPydanticスキーマ (`schemas.py` の `Constellation`) には `lines` フィールドが明記されていませんが、APIレスポンスには含まれています。
 
 2. データモデル
    - SQLiteによる永続化（旧開発環境）
@@ -76,6 +80,7 @@
    - Adapter Pattern（外部サービス連携など）
    - レスポンシブデザインパターン
    - タッチインタラクションパターン (実装予定)
+   - **API Retry Pattern**: バックエンドAPI呼び出し (`fetchStars`, `searchCelestialObjects`, `fetchConstellations`) において、サーバーエラー(5xx)やネットワークエラー発生時に指数バックオフを用いたリトライ（最大3回）を実装 (`fetchWithRetry` ヘルパー関数 in `src/app/services/starService.js`)。これにより、バックエンドのスリープからの復帰など、一時的な接続問題に対する耐性を向上。
 
 2. バックエンド
    - Repository Pattern（データアクセス）
@@ -94,6 +99,55 @@
    - メモリキャッシュ
    - ローカルストレージ
    - データ更新ポリシー
+
+### CSVデータ仕様
+
+データベースの初期データ（星座、星、星座線）は、保守性と拡張性を考慮し、Pythonコード内ではなくCSVファイルで管理します。CSVファイルは `src/backend/data/` ディレクトリに配置します。
+
+**共通仕様:**
+- 文字コード: UTF-8
+- 区切り文字: カンマ (`,`)
+- 各ファイルの1行目はヘッダー行とします。
+
+**ファイル詳細:**
+
+1.  **`constellations.csv`**
+    -   目的: 星座およびアステリズムの基本情報を定義します。
+    -   ヘッダー: `name,name_jp,abbreviation,season,right_ascension_center,declination_center,description`
+    -   各列の説明:
+        -   `name`: 星座/アステリズムの英語名 (例: Orion, Summer Triangle)
+        -   `name_jp`: 日本語名 (例: オリオン座, 夏の大三角)
+        -   `abbreviation`: 略符 (例: Ori, UMa, SUMTRI)。これは他のCSVファイルから参照される一意なキーとなります。
+        -   `season`: 主に見える季節 (例: 冬, 夏)
+        -   `right_ascension_center`: 中心の赤経 (度)
+        -   `declination_center`: 中心の赤緯 (度)
+        -   `description`: 星座/アステリズムの説明
+
+2.  **`stars.csv`**
+    -   目的: 個々の星の情報を定義します。
+    -   ヘッダー: `hip_number,name,common_name_jp,bayer_designation,right_ascension,declination,magnitude,constellation_abbreviation`
+    -   各列の説明:
+        -   `hip_number`: ヒッパルコス星表番号。星の一意な識別子として使用します。
+        -   `name`: 星の固有名 (例: Betelgeuse, Vega)
+        -   `common_name_jp`: 日本語の通称 (例: ベテルギウス, ベガ)
+        -   `bayer_designation`: バイエル符号 (例: α Ori, α Lyr)
+        -   `right_ascension`: 赤経 (度)
+        -   `declination`: 赤緯 (度)
+        -   `magnitude`: 見かけの等級
+        -   `constellation_abbreviation`: この星が属する星座/アステリズムの略符 (`constellations.csv` の `abbreviation` と対応)。`init_db.py` で読み込む際に、対応する `constellation_id` に変換されます。
+
+3.  **`constellation_lines.csv`**
+    -   目的: 星座やアステリズムを形作る線を定義します。
+    -   ヘッダー: `constellation_abbreviation,star1_hip,star2_hip`
+    -   各列の説明:
+        -   `constellation_abbreviation`: この線が属する星座/アステリズムの略符 (`constellations.csv` の `abbreviation` と対応)。
+        -   `star1_hip`: 線の始点となる星のヒッパルコス番号 (`stars.csv` の `hip_number` と対応)。
+        -   `star2_hip`: 線の終点となる星のヒッパルコス番号 (`stars.csv` の `hip_number` と対応)。
+        -   `init_db.py` で読み込む際に、`constellation_abbreviation`, `star1_hip`, `star2_hip` はそれぞれ対応する `constellation_id`, `star1_id`, `star2_id` に変換されます。
+
+**データ読み込み処理 (`init_db.py`):**
+- スクリプトはこれらのCSVファイルを読み込みます。
+- `constellation_abbreviation` や `hip_number` をキーとして、データベースに挿入済みの対応するレコードのIDを検索し、外部キー (`constellation_id`, `star1_id`, `star2_id`) を設定します。
 
 ## コーディング規約
 
