@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; // Reactインポートを復元
 import { Line, Html } from '@react-three/drei';
 import * as THREE from 'three';
 

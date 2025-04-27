@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react'; // React is likely unused with new JSX transform
+import React, { useState, useEffect } from 'react'; // Keep React for useState, useEffect
 import { Autocomplete, TextField, CircularProgress } from '@mui/material';
 import { searchCelestialObjects } from '../services/starService'; // Updated path again
 import StarIcon from '@mui/icons-material/Star';
@@ -80,6 +81,10 @@ export const SearchBar = ({ onResultSelect, sx = {} }) => {
         <TextField
           {...params}
           label="星・星座を検索"
+          inputProps={{ // Add data-testid to the input element itself
+            ...params.inputProps,
+            'data-testid': 'search-input',
+          }}
           InputProps={{
             ...params.InputProps,
             endAdornment: (

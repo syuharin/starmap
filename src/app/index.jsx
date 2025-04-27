@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; // Reactインポートを復元
 import { createRoot } from 'react-dom/client';
 import App from './App';
 

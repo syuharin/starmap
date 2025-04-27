@@ -2,6 +2,7 @@
   "name": "starmap",
   "version": "1.0.0",
   "description": "星図表示アプリケーション",
+  "type": "module",
   "main": "src/app/main.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
@@ -14,7 +15,7 @@
     "test:visual": "jest src/utils/test/starmap.test.js",
     "test:visual:dev": "concurrently \"npm run dev:frontend\" \"wait-on http://localhost:3002 && npm run test:visual\"",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
-    "ci:frontend": "npm run lint && npm test && npm run build"
+    "ci:frontend": "npm run lint && concurrently -k -s first \"npm run dev:backend\" \"npm run dev:frontend\" \"wait-on http://localhost:8000/docs http://localhost:3002 && npm test\" && npm run build"
   },
   "author": "",
   "license": "MIT",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",
+    "@babel/eslint-parser": "^7.27.0",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@eslint-community/eslint-utils": "^4.6.1",

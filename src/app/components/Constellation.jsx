@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useEffect, useState, useRef } from 'react';
+import { Box, Typography } from '@mui/material'; // Re-add Box and Typography for error/loading states
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Line, Html, OrbitControls } from '@react-three/drei';
 import { CompassRose } from './CompassRose';
-import { AltitudeLines } from './AltitudeLines';
+import { AltitudeLines } from './AltitudeLines'; // Keep even if unused for now, might be needed
 import * as THREE from 'three';
 import { fetchConstellations } from '../services/starService'; // Updated path again
 
@@ -75,7 +75,8 @@ const Star2D = ({ position, magnitude, name }) => {
 // カメラコントロールコンポーネント
 const CameraController = ({ focusedObject }) => {
   const { camera, controls } = useThree();
-  const targetPosition = useRef(new THREE.Vector3());
+  const targetRotation = useRef(new THREE.Euler()); // targetRotationを宣言
+  // targetPosition は未使用のため削除
   const isTransitioning = useRef(false);
   const isInitialized = useRef(false);
 
@@ -134,8 +135,8 @@ const CameraController = ({ focusedObject }) => {
         }
       }
 
-      // 方位円の中心から天体への方向を計算
-      const direction = objectPosition.normalize();
+      // 方位円の中心から天体への方向を計算 (direction は未使用のため削除)
+      // const direction = objectPosition.normalize(); 
       
       // カメラの位置を方位円の中心に設定
       camera.position.set(0, 0, 0);
@@ -152,7 +153,7 @@ const CameraController = ({ focusedObject }) => {
         controls.target.set(0, 0, 0);
       }
     }
-  }, [focusedObject, controls]);
+  }, [focusedObject, controls, camera]); // camera を依存配列に追加
 
   useFrame(() => {
     if (focusedObject && isTransitioning.current) {
@@ -367,7 +368,8 @@ export const Constellation = ({ selectedDate, showCompass, showAltitude, focused
   const [constellationData, setConstellationData] = useState(null);
   const [error, setError] = useState(null);
   const [use2D, setUse2D] = useState(false);
-  
+  // Star, ConstellationLine, Star2D, Constellation3D は内部コンポーネントなので no-unused-vars は無視されるはず
+
   // WebGLサポートチェック
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -435,11 +437,54 @@ export const Constellation = ({ selectedDate, showCompass, showAltitude, focused
     );
   }
 
-  return <Constellation3D 
-    constellationData={constellationData} 
+  // Add data-testid for testing
+  const containerProps = { 'data-testid': 'constellation-container' };
+
+  if (use2D) {
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: 'black' }} {...containerProps}>
+        {constellationData.constellations.map(constellation =>
+          constellation.stars.map(star => {
+            const scale = 200;
+            const position = {
+              x: Math.cos(THREE.MathUtils.degToRad(star.right_ascension)) * scale,
+              y: Math.sin(THREE.MathUtils.degToRad(star.declination)) * scale
+            };
+
+            return (
+              <Star2D
+                key={star.name}
+                position={position}
+                magnitude={star.magnitude}
+                name={star.name}
+              />
+            );
+          })
+        )}
+      </div>
+    );
+  }
+
+  // Note: Wrapping Constellation3D in a div to reliably apply data-testid for testing.
+  // Add height: 100% to the wrapper div to ensure it fills the parent Box.
+  return (
+    <div data-testid="constellation-container" style={{ height: '100%' }}>
+      <Constellation3D
+        constellationData={constellationData}
+        selectedDate={selectedDate}
+        showCompass={showCompass}
+        showAltitude={showAltitude}
+        focusedObject={focusedObject}
+      />
+    </div>
+  );
+  /* Previous attempt:
+  return <Constellation3D
+    {...containerProps} // Pass test id props (might need adjustment based on Constellation3D)
+    constellationData={constellationData}
     selectedDate={selectedDate}
     showCompass={showCompass}
     showAltitude={showAltitude}
     focusedObject={focusedObject}
-  />;
+  />; */ // Add closing comment tag
 };
